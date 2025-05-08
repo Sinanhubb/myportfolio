@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="flex justify-center space-x-6 mb-6">
           {/* GitHub */}
           <a
-            href="https://github.com/yourusername"
+            href="https://github.com/Sinanhubb"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-400 hover:text-white transition"
@@ -25,7 +25,7 @@ const Footer = () => {
 
           {/* LinkedIn */}
           <a
-            href="https://linkedin.com/in/yourusername"
+            href="https://www.linkedin.com/in/ahammedsinan/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-400 hover:text-white transition"
@@ -40,22 +40,23 @@ const Footer = () => {
             </svg>
           </a>
 
-          {/* Twitter */}
-          <a
-            href="https://twitter.com/yourusername"
+          {/* Instagram */}
+            <a
+            href="https://www.instagram.com/_s.inan__/?next=%2F"
             target="_blank"
             rel="noopener noreferrer"
             className="text-gray-400 hover:text-white transition"
-          >
-            <span className="sr-only">Twitter</span>
-            <svg
-              className="h-5 w-5 sm:h-6 sm:w-6"
-              fill="currentColor"
-              viewBox="0 0 24 24"
             >
-              <path d="M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0022.43.36a9.15 9.15 0 01-2.88 1.1 4.52 4.52 0 00-7.72 4.13 12.83 12.83 0 01-9.32-4.73 4.48 4.48 0 001.4 6.02A4.41 4.41 0 012 9.7v.06a4.52 4.52 0 003.6 4.43 4.48 4.48 0 01-2.03.07 4.52 4.52 0 004.22 3.13A9.05 9.05 0 012 19.54 12.78 12.78 0 008.29 21c7.55 0 11.67-6.26 11.67-11.7 0-.18 0-.35-.01-.52A8.3 8.3 0 0023 3z" />
+            <span className="sr-only">Instagram</span>
+            <svg
+                className="h-5 w-5 sm:h-6 sm:w-6"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+            >
+                <path d="M7.75 2C5.4 2 4 3.4 4 5.75v12.5C4 20.6 5.4 22 7.75 22h8.5C18.6 22 20 20.6 20 18.25V5.75C20 3.4 18.6 2 16.25 2h-8.5zM12 8a4 4 0 110 8 4 4 0 010-8zm0 1.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5zm4.25-.75a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.5 5.75v12.5a2.25 2.25 0 01-2.25 2.25h-8.5A2.25 2.25 0 015.5 18.25V5.75A2.25 2.25 0 017.75 3.5h8.5A2.25 2.25 0 0118.5 5.75z" />
             </svg>
-          </a>
+            </a>
+
         </div>
 
         {/* Footer Text */}
