@@ -4,8 +4,9 @@ import About from "./About";
 import Projects from "./Projects";
 import Footer from "./Footer";
 import Contact from "./Contact";
+import { ReactTyped } from "react-typed";
 
-// Navbar loaded with React.lazy
+// Lazy load Navbar
 const Navbar = React.lazy(() => import("./Navbar"));
 
 function App() {
@@ -44,7 +45,6 @@ function App() {
       description: "A full-stack e-commerce solution with payment integration and inventory management.",
       image: "/api/placeholder/150/200",
       tags: ["React", "Node.js", "MongoDB"],
-      featured: true
     },
     {
       id: 2,
@@ -52,7 +52,6 @@ function App() {
       description: "A responsive portfolio website built with modern web technologies.",
       image: "/api/placeholder/150/200",
       tags: ["React", "Tailwind CSS", "Framer Motion"],
-      featured: true
     },
     {
       id: 3,
@@ -60,7 +59,6 @@ function App() {
       description: "A productivity application for managing tasks and projects with team collaboration features.",
       image: "/api/placeholder/150/200",
       tags: ["React Native", "Firebase", "Redux"],
-      featured: false
     },
     {
       id: 4,
@@ -68,8 +66,7 @@ function App() {
       description: "Real-time weather forecasting with interactive maps and location-based services.",
       image: "/api/placeholder/150/200",
       tags: ["JavaScript", "API Integration", "Geolocation"],
-      featured: false
-    }
+    },
   ];
 
   const testimonials = [
@@ -89,6 +86,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white flex flex-col transition-colors duration-300">
+
       {/* Dark mode toggle */}
       <button
         aria-label="Toggle dark mode"
@@ -123,7 +121,12 @@ function App() {
             My <span className="text-indigo-600 dark:text-indigo-400">Portfolio</span>
           </h1>
           <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-8">
-            Crafting elegant digital experiences with clean code and intuitive design.
+            <ReactTyped
+              strings={["I'm a Developer.", "I'm a Designer.", "I'm a Problem Solver."]}
+              typeSpeed={50}
+              backSpeed={30}
+              loop
+            />
           </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -134,7 +137,6 @@ function App() {
             >
               Explore Projects
             </motion.a>
-
             <motion.a
               href="#contact"
               className="px-8 py-3 border-2 border-indigo-500 text-indigo-600 dark:text-indigo-400 rounded-full hover:bg-indigo-50 dark:hover:bg-indigo-800 shadow transition-all duration-300 font-medium"
@@ -183,7 +185,7 @@ function App() {
                 <p className="text-gray-600 dark:text-gray-300 mb-6 italic">{testimonial.text}</p>
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full mr-4 flex items-center justify-center font-bold text-gray-600 dark:text-gray-300">
-                    {testimonial.author.split(" ").map((n) => n[0]).join("")}
+                    {testimonial.author.split(" ").map(n => n[0]).join("")}
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-800 dark:text-white">{testimonial.author}</h4>
@@ -201,8 +203,5 @@ function App() {
     </div>
   );
 }
-<div className="bg-red-500 text-white p-4">
-  Tailwind Color Test
-</div>
 
 export default App;
