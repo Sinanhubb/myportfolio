@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
+import axios from "axios";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 40 },
@@ -11,6 +12,25 @@ const fadeInUp = {
 };
 
 const Contact = () => {
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState(null);
+
+  const handleChange = (e) => {
+    setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axios.post("http://localhost:5000/api/contact", formData);
+      setStatus("✅ Message sent successfully!");
+      setFormData({ name: "", email: "", message: "" });
+    } catch (error) {
+      console.error(error);
+      setStatus("❌ Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <section id="contact" className="py-20 bg-white dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-4">
@@ -30,7 +50,7 @@ const Contact = () => {
           </h2>
           <div className="w-20 h-1 bg-blue-600 mx-auto mb-8" />
           <p className="text-gray-600 dark:text-gray-300 text-lg max-w-2xl mx-auto">
-            Have a project in mind or want to discuss potential opportunities? Let’s connect!
+            Have a project in mind or want to discuss opportunities? Let’s connect!
           </p>
         </motion.div>
 
@@ -54,7 +74,9 @@ const Contact = () => {
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-1">Email</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  <a href="mailto:Sinsinan786@gmail.com" className="underline hover:text-blue-500">Sinsinan786@gmail.com</a>
+                  <a href="mailto:Sinsinan786@gmail.com" className="underline hover:text-blue-500">
+                    Sinsinan786@gmail.com
+                  </a>
                 </p>
               </div>
             </div>
@@ -81,23 +103,29 @@ const Contact = () => {
             viewport={{ once: true, margin: "-100px" }}
             variants={fadeInUp}
           >
-            <form className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               <input
                 name="name"
                 type="text"
                 placeholder="Your Name"
+                value={formData.name}
+                onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
                 name="email"
                 type="email"
                 placeholder="Your Email"
+                value={formData.email}
+                onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <textarea
                 name="message"
                 rows="4"
                 placeholder="Your Message"
+                value={formData.message}
+                onChange={handleChange}
                 className="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               ></textarea>
               <button
@@ -106,6 +134,9 @@ const Contact = () => {
               >
                 Send Message
               </button>
+              {status && (
+                <p className="text-sm text-center mt-2 text-green-500 dark:text-green-400">{status}</p>
+              )}
             </form>
           </motion.div>
         </div>
