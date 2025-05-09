@@ -126,11 +126,7 @@ function App() {
       transition: { staggerChildren: 0.2 },
     },
   };
-   const handleLogout = () => {
-  localStorage.removeItem('admin_token');
-  window.location.href = "/admin-login";
-};
-
+  
   const skills = [
     { name: "JavaScript", level: 90 },
     { name: "React", level: 85 },
