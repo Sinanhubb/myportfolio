@@ -22,8 +22,7 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const apiUrl = "https://myportfolio-oflk.onrender.com/api/contact";
-await axios.post(apiUrl, formData);
+    const apiUrl = "https://myportfolio-oflk.onrender.com/api/contact"; // ✅ Fixed endpoint
 
     try {
       console.log("Sending form data to:", apiUrl);
@@ -39,7 +38,6 @@ await axios.post(apiUrl, formData);
   return (
     <section id="contact" className="py-20 bg-white dark:bg-gray-900">
       <div className="max-w-6xl mx-auto px-4">
-        {/* Header */}
         <motion.div
           initial="hidden"
           whileInView="visible"
