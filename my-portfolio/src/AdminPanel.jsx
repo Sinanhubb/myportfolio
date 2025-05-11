@@ -5,26 +5,32 @@ const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000';
+  // ✅ Fallback to localhost if environment variable is undefined
+  const API_BASE =
+    (typeof import.meta.env !== 'undefined' && import.meta.env.VITE_API_BASE_URL) ||
+    'http://localhost:5000';
 
   useEffect(() => {
-    axios
-      .get(`${API_BASE}/api/submissions`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('admin_token')}`,
-        },
-      })
-      .then((res) => {
-        setSubmissions(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(err);
-        setLoading(false);
+    const fetchSubmissions = async () => {
+      try {
+        const token = localStorage.getItem('admin_token');
+        const response = await axios.get(`${API_BASE}/api/submissions`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setSubmissions(response.data);
+      } catch (err) {
+        console.error('Error fetching submissions:', err);
         if (err.response?.status === 401 || err.response?.status === 403) {
           window.location.href = '/admin-login';
         }
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSubmissions();
   }, [API_BASE]);
 
   const handleLogout = () => {
