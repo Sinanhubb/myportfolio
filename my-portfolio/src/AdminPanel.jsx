@@ -5,11 +5,13 @@ const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Use proper API base (fallback to localhost only if running locally)
-  const isLocal = window.location.hostname === 'localhost';
-  const API_BASE = isLocal
-    ? 'http://localhost:5000'
-    : import.meta.env.VITE_API_BASE_URL;
+  // ✅ Fallback to localhost only if env variable is undefined
+  const API_BASE =
+    typeof import.meta !== 'undefined' &&
+    import.meta.env &&
+    import.meta.env.VITE_API_BASE_URL
+      ? import.meta.env.VITE_API_BASE_URL
+      : 'http://localhost:5000';
 
   useEffect(() => {
     const fetchSubmissions = async () => {
