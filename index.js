@@ -4,10 +4,11 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 // JWT middleware
 const authenticate = (req, res, next) => {
@@ -18,43 +19,43 @@ const authenticate = (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.role !== 'admin') throw new Error();
     next();
-  } catch {
+  } catch (err) {
     res.status(403).json({ message: 'Forbidden' });
   }
 };
 
 // Middleware
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://your-site-name.netlify.app'], // Change this to your actual Netlify domain
+  origin: ['http://localhost:3000', 'https://sinanportfolioo.netlify.app'], // Replace with your actual frontend
   methods: ['GET', 'POST'],
   credentials: true,
 }));
 app.use(bodyParser.json());
 
-// PostgreSQL connection
+// PostgreSQL setup
 const pool = new Pool({
-  user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME || 'portfolio_contact',
-  password: process.env.DB_PASSWORD || 'postgres',
+  user: process.env.DB_USER || 'portfolio_data_0ma3_user',
+  host: process.env.DB_HOST || 'dpg-db93fc9kc04c73f934f0-a',
+  database: process.env.DB_NAME || 'portfolio_data_0ma3',
+  password: process.env.DB_PASSWORD || '0DOKNQen1SouEXOm1EkQ028jPYOd3BNF',
   port: process.env.DB_PORT || 5432,
 });
 
-// Nodemailer transporter
+// Nodemailer setup
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'your-email@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'your-app-password',
+    user: process.env.EMAIL_USER || 'htmlvjec@gmail.com',
+    pass: process.env.EMAIL_PASSWORD || 'eoih qzhm vunf pmsc',
   },
 });
 
 // Root route
 app.get('/', (req, res) => {
-  res.send('Backend is running');
+  res.send('✅ Portfolio backend is running!');
 });
 
-// Contact form submission
+// Submit contact form
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -71,21 +72,22 @@ app.post('/api/contact', async (req, res) => {
       html: `
         <div>
           <h2>Hi ${name},</h2>
-          <p>Thanks for your message: "${message}".</p>
-          <p>I'll get back to you soon!</p>
-          <p>Best regards,<br>Your Portfolio Site</p>
+          <p>Thank you for your message:</p>
+          <blockquote>${message}</blockquote>
+          <p>I'll be in touch soon.</p>
+          <br><p>— Portfolio Site</p>
         </div>
       `
     });
 
     res.status(201).json({ success: true, message: 'Form submitted and email sent' });
   } catch (err) {
-    console.error('Contact Error:', err.message);
-    res.status(500).json({ success: false, message: 'Server error' });
+    console.error('❌ Contact Error:', err);
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
   }
 });
 
-// Admin login
+// Admin login for token
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -104,13 +106,13 @@ app.post('/api/admin/login', (req, res) => {
   }
 });
 
-// Admin: get all contact form submissions
+// View all form submissions (admin)
 app.get('/api/submissions', authenticate, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM contact_form ORDER BY submitted_at DESC');
     res.json(result.rows);
   } catch (err) {
-    console.error('Submissions Error:', err.message);
+    console.error('❌ Submissions Error:', err);
     res.status(500).json({ success: false, message: 'Failed to fetch submissions' });
   }
 });
