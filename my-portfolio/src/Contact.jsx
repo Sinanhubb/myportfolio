@@ -21,12 +21,16 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const apiUrl = "https://your-backend-url.onrender.com/api/contact"; // 🔁 Replace with your backend URL
+
     try {
-      await axios.post("http://localhost:5000/api/contact", formData);
+      console.log("Sending form data to:", apiUrl);
+      await axios.post(apiUrl, formData);
       setStatus("✅ Message sent successfully!");
       setFormData({ name: "", email: "", message: "" });
     } catch (error) {
-      console.error(error);
+      console.error("Form submission error:", error);
       setStatus("❌ Something went wrong. Please try again.");
     }
   };
@@ -110,6 +114,7 @@ const Contact = () => {
                 placeholder="Your Name"
                 value={formData.name}
                 onChange={handleChange}
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <input
@@ -118,6 +123,7 @@ const Contact = () => {
                 placeholder="Your Email"
                 value={formData.email}
                 onChange={handleChange}
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <textarea
@@ -126,6 +132,7 @@ const Contact = () => {
                 placeholder="Your Message"
                 value={formData.message}
                 onChange={handleChange}
+                required
                 className="w-full p-3 border border-gray-300 rounded-lg dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               ></textarea>
               <button
