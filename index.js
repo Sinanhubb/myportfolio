@@ -10,6 +10,20 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
+// ✅ CORS Configuration
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://sinanportfolioo.netlify.app'],
+  methods: ['GET', 'POST', 'OPTIONS'], // include OPTIONS for preflight
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
+
+// ✅ Preflight handler (important for CORS)
+app.options('*', cors());
+
+// Middleware
+app.use(bodyParser.json());
+
 // JWT middleware
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -23,14 +37,6 @@ const authenticate = (req, res, next) => {
     res.status(403).json({ message: 'Forbidden' });
   }
 };
-
-// Middleware
-app.use(cors({
-  origin: ['http://localhost:3000', 'https://sinanportfolioo.netlify.app'], // Replace with your actual frontend
-  methods: ['GET', 'POST'],
-  credentials: true,
-}));
-app.use(bodyParser.json());
 
 // PostgreSQL setup
 const pool = new Pool({
