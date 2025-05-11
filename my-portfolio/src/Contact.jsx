@@ -22,7 +22,8 @@ const Contact = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const apiUrl = "https://your-backend-url.onrender.com/api/contact"; // 🔁 Replace with your backend URL
+    const apiUrl = "https://myportfolio-oflk.onrender.com/api/contact";
+await axios.post(apiUrl, formData);
 
     try {
       console.log("Sending form data to:", apiUrl);
