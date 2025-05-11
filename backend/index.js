@@ -4,6 +4,7 @@ const cors = require('cors');
 const { Pool } = require('pg');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+
 require('dotenv').config();
 
 const app = express();
