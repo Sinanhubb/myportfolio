@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
 
@@ -8,16 +8,63 @@ const AdminPanel = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  const API_BASE = import.meta.env.VITE_API_BASE_URL || 
-    (window.location.hostname.includes('netlify') 
-      ? 'https://myportfolio-oflk.onrender.com' 
-      : 'http://localhost:5000');
+  // Safe handling of VITE_API_BASE_URL
+  const API_BASE = (() => {
+    try {
+      return import.meta?.env?.VITE_API_BASE_URL ||
+        (window.location.hostname.includes('netlify')
+          ? 'https://myportfolio-oflk.onrender.com'
+          : 'http://localhost:5000');
+    } catch {
+      return window.location.hostname.includes('netlify')
+        ? 'https://myportfolio-oflk.onrender.com'
+        : 'http://localhost:5000';
+    }
+  })();
 
   const validateToken = (token) => {
-    return token && 
-           typeof token === 'string' && 
-           token.length > 30 && 
-           !['undefined', 'null', 'dummy-token'].includes(token);
+    return token &&
+      typeof token === 'string' &&
+      token.length > 30 &&
+      !['undefined', 'null', 'dummy-token'].includes(token);
+  };
+
+  const fetchSubmissions = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const token = localStorage.getItem('admin_token');
+
+      if (!validateToken(token)) {
+        localStorage.removeItem('admin_token');
+        window.location.href = '/admin-login';
+        return;
+      }
+
+      const response = await axios.get(`${API_BASE}/api/submissions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000,
+      });
+
+      if (Array.isArray(response.data)) {
+        const formatted = response.data.map(sub => ({
+          ...sub,
+          id: sub.id || `${sub.email}-${sub.submitted_at || sub.created_at}`,
+          submitted_at: sub.submitted_at || sub.created_at || new Date().toISOString(),
+        }));
+        setSubmissions(formatted);
+      } else {
+        throw new Error('Invalid data format received from server');
+      }
+    } catch (err) {
+      handleApiError(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleApiError = (err) => {
@@ -47,54 +94,6 @@ const AdminPanel = () => {
     setError(err.message || 'Failed to fetch submissions. Please try again.');
   };
 
-  const fetchSubmissions = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const token = localStorage.getItem('admin_token');
-
-      if (!validateToken(token)) {
-        localStorage.removeItem('admin_token');
-        window.location.href = '/admin-login';
-        return;
-      }
-
-      const response = await axios.get(`${API_BASE}/api/submissions`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        timeout: 10000,
-      });
-
-      if (Array.isArray(response.data)) {
-        const formattedSubmissions = response.data.map(sub => ({
-          ...sub,
-          id: sub.id || `${sub.email}-${sub.submitted_at || sub.created_at}`,
-          submitted_at: sub.submitted_at || sub.created_at || new Date().toISOString(),
-        }));
-        setSubmissions(formattedSubmissions);
-      } else {
-        throw new Error('Invalid data format received from server');
-      }
-    } catch (err) {
-      handleApiError(err);
-    } finally {
-      setLoading(false);
-    }
-  }, [API_BASE]);
-
-  useEffect(() => {
-    const token = localStorage.getItem('admin_token');
-    if (!validateToken(token)) {
-      window.location.href = '/admin-login';
-      return;
-    }
-
-    fetchSubmissions();
-  }, [fetchSubmissions]);
-
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
     window.location.href = '/admin-login';
@@ -104,7 +103,7 @@ const AdminPanel = () => {
     const headers = ['Name', 'Email', 'Message', 'Date'];
     const csvContent = [
       headers.join(','),
-      ...filteredSubmissions.map(sub => 
+      ...filteredSubmissions.map(sub =>
         `"${sub.name.replace(/"/g, '""')}","${sub.email}","${sub.message.replace(/"/g, '""')}","${format(new Date(sub.submitted_at), 'PPpp')}"`
       )
     ].join('\n');
@@ -119,18 +118,28 @@ const AdminPanel = () => {
     document.body.removeChild(link);
   };
 
-  const filteredSubmissions = submissions.filter(sub => 
+  const filteredSubmissions = submissions.filter(sub =>
     sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     sub.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     sub.message.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    if (!validateToken(token)) {
+      window.location.href = '/admin-login';
+      return;
+    }
+
+    fetchSubmissions();
+  }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-12 px-4 text-gray-800 dark:text-white">
       <div className="max-w-4xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
           <h1 className="text-3xl font-bold">
-            📥 Admin Panel – {loading ? '...' : filteredSubmissions.length} 
+            📥 Admin Panel – {loading ? '...' : filteredSubmissions.length}
             Submission{filteredSubmissions.length !== 1 && 's'}
           </h1>
 
@@ -172,7 +181,7 @@ const AdminPanel = () => {
           <div className="p-4 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-lg mb-4">
             <p className="font-medium">Error:</p>
             <p>{error}</p>
-            <button 
+            <button
               onClick={fetchSubmissions}
               className="mt-2 px-3 py-1 bg-red-600 text-white rounded text-sm"
               disabled={loading}
