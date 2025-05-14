@@ -1,98 +1,78 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-// Create a reusable function for token validation
-export const validateToken = (token) =>
-  token &&
-  typeof token === 'string' &&
-  token.length > 30 &&
-  !['undefined', 'null', 'dummy-token'].includes(token);
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
   
-  // Check if user is already logged in
-  useEffect(() => {
-    const token = localStorage.getItem('admin_token');
-    if (validateToken(token)) {
-      navigate('/admin', { replace: true });
-    }
-  }, [navigate]);
+  // Get the intended destination
+  const from = location.state?.from?.pathname || '/admin-panel';
 
-  const handleLogin = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Hardcoded credentials
-    const adminUsername = 'admin';
-    const adminPassword = 'admin123';
-    
-    if (username === adminUsername && password === adminPassword) {
-      // Generate a token that will pass validation (length > 30)
-      const mockToken = `admin-${Date.now()}-${Math.random().toString(36).substring(2, 15)}-${Math.random().toString(36).substring(2, 15)}`;
-      
-      // Store in localStorage
-      localStorage.setItem('admin_token', mockToken);
-      
-      setUsername(''); // Clear form inputs
-      setPassword('');
-      setError(''); 
-      
-      // Use the navigate function instead of direct window.location
-      navigate('/admin', { replace: true });
-    } else {
-      setError('Invalid username or password');
+    setError('');
+    setLoading(true);
+
+    try {
+      // Make API call to your login endpoint
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL || ''}/api/admin/login`, 
+        { username, password }
+      );
+
+      // Handle successful login
+      if (response.data && response.data.token) {
+        login(response.data.token);
+        
+        // Use navigate to redirect without page reload
+        navigate(from, { replace: true });
+      } else {
+        setError('Authentication failed. Please check your credentials.');
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
-  
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'username') setUsername(value);
-    if (name === 'password') setPassword(value);
-    if (error) setError(''); // Clear error when user types
-  };
-  
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-sm w-full">
-        <h1 className="text-2xl font-semibold text-center mb-4">Admin Login</h1>
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-200">Username</label>
-            <input
-              type="text"
-              name="username"
-              className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
-              value={username}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          
-          <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-200">Password</label>
-            <input
-              type="password"
-              name="password"
-              className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
-              value={password}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          
-          {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
-          >
-            Login
-          </button>
-        </form>
-      </div>
+    <div className="admin-login-container">
+      <h2>Admin Login</h2>
+      {error && <div className="error-message">{error}</div>}
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
     </div>
   );
 };
