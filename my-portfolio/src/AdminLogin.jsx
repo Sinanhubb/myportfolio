@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -7,30 +8,25 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Hardcoded credentials (Replace with actual API call for production)
-    const adminEmail = 'admin@example.com';
-    const adminPassword = 'admin123';
+    try {
+      const response = await axios.post('https://your-api-url.com/admin/login', {
+        email,
+        password,
+      });
 
-    if (email === adminEmail && password === adminPassword) {
-      // Save token to localStorage and redirect to admin panel
-      localStorage.setItem('admin_token', 'dummy-token');
-      setEmail(''); // Clear form inputs
-      setPassword('');
-      setError('');
-      navigate('/admin'); // Redirect to Admin Panel
-    } else {
-      setError('Invalid email or password');
+      if (response.data.token) {
+        // Save the token and redirect
+        localStorage.setItem('admin_token', response.data.token);
+        navigate('/admin');
+      } else {
+        setError('Login failed. Please try again.');
+      }
+    } catch (err) {
+      setError('An error occurred during login. Please try again.');
     }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'email') setEmail(value);
-    if (name === 'password') setPassword(value);
-    if (error) setError(''); // Clear the error when the user types
   };
 
   return (
@@ -45,7 +41,7 @@ const AdminLogin = () => {
               name="email"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={email}
-              onChange={handleInputChange}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
           </div>
@@ -57,7 +53,7 @@ const AdminLogin = () => {
               name="password"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={password}
-              onChange={handleInputChange}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
