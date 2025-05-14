@@ -6,6 +6,7 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Dynamic API base URL (Vite + Netlify + Local)
   const API_BASE = (() => {
     if (import.meta.env?.VITE_API_BASE_URL) {
       return import.meta.env.VITE_API_BASE_URL;
@@ -31,27 +32,32 @@ const AdminPanel = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          timeout: 10000, // 10 second timeout
+          timeout: 10000, // 10-second timeout
         });
 
-        setSubmissions(response.data);
+        // Handle potential missing `submitted_at` (fallback to `created_at` or similar)
+        const formattedSubmissions = response.data.map(sub => ({
+          ...sub,
+          submitted_at: sub.submitted_at || sub.created_at || new Date().toISOString(),
+        }));
+
+        setSubmissions(formattedSubmissions);
       } catch (err) {
-        console.error('Error details:', {
-          message: err.message,
-          code: err.code,
-          response: err.response?.data,
-        });
+        console.error('Fetch error:', err);
 
-        // Detailed error handling
+        // Enhanced error handling
         if (err.response) {
-          // Handle server-side errors
-          setError(`Server error: ${err.response.status} - ${err.response.data?.message || 'An error occurred'}`);
+          if (err.response.status === 500) {
+            setError('Server error: Database query failed (check backend logs)');
+          } else {
+            setError(`Server error: ${err.response.status} - ${err.response.data?.message || 'Unknown error'}`);
+          }
         } else if (err.code === 'ECONNABORTED') {
-          setError('Request timeout. Please check your connection.');
+          setError('Request timeout. Server might be busy.');
         } else if (err.message === 'Network Error') {
-          setError('Cannot connect to server. Please try again later.');
+          setError('Cannot connect to server. Check your internet.');
         } else {
-          setError('An unexpected error occurred. Please try again.');
+          setError(err.message || 'Failed to load submissions.');
         }
       } finally {
         setLoading(false);
@@ -115,8 +121,9 @@ const AdminPanel = () => {
                     {s.email}
                   </p>
                 </div>
+                {/* Fallback for missing `submitted_at` */}
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {new Date(s.submitted_at).toLocaleString()}
+                  {s.submitted_at ? new Date(s.submitted_at).toLocaleString() : 'No date'}
                 </p>
               </div>
               <p className="mt-3 whitespace-pre-wrap">{s.message}</p>
