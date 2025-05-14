@@ -8,8 +8,8 @@ import Contact from "./Contact";
 import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
+import PrivateRoute from "./PrivateRoute"; // ✅ Import PrivateRoute
 
-// Lazy load Navbar
 const Navbar = React.lazy(() => import("./Navbar"));
 
 function MainApp({ skills, projects, testimonials, fadeInUp, staggerContainer }) {
@@ -54,16 +54,10 @@ function MainApp({ skills, projects, testimonials, fadeInUp, staggerContainer })
         </motion.div>
       </section>
 
-      {/* About */}
       <About skills={skills} />
-
-      {/* Projects */}
       <Projects projects={projects} />
-
-      {/* Contact */}
       <Contact />
 
-      {/* Testimonials */}
       <section className="py-20 bg-gray-100 dark:bg-gray-800">
         <div className="max-w-6xl mx-auto px-4">
           <motion.div
@@ -126,7 +120,7 @@ function App() {
       transition: { staggerChildren: 0.2 },
     },
   };
-  
+
   const skills = [
     { name: "JavaScript", level: 90 },
     { name: "React", level: 85 },
@@ -136,95 +130,30 @@ function App() {
     { name: "MongoDB", level: 75 },
   ];
 
-  const projects = [
-    {
-      id: 1,
-      title: "E-commerce Platform",
-      description: "A full-stack e-commerce solution with payment integration and inventory management.",
-      image: "/api/placeholder/150/200",
-      tags: ["React", "Node.js", "MongoDB"],
-    },
-    {
-      id: 2,
-      title: "Portfolio Website",
-      description: "A responsive portfolio website built with modern web technologies.",
-      image: "/api/placeholder/150/200",
-      tags: ["React", "Tailwind CSS", "Framer Motion"],
-    },
-    {
-      id: 3,
-      title: "Task Management App",
-      description: "A productivity application for managing tasks and projects with team collaboration features.",
-      image: "/api/placeholder/150/200",
-      tags: ["React Native", "Firebase", "Redux"],
-    },
-    {
-      id: 4,
-      title: "Weather Forecast App",
-      description: "Real-time weather forecasting with interactive maps and location-based services.",
-      image: "/api/placeholder/150/200",
-      tags: ["JavaScript", "API Integration", "Geolocation"],
-    },
-  ];
-
-  const testimonials = [
-    {
-      id: 1,
-      text: "Amazing work! Highly recommended.",
-      author: "Jane Smith",
-      position: "CTO, TechCorp",
-    },
-    {
-      id: 2,
-      text: "Great communication and code quality.",
-      author: "Michael Johnson",
-      position: "Founder, StartupX",
-    },
-  ];
+  const projects = [...]; // Your existing projects
+  const testimonials = [...]; // Your existing testimonials
 
   return (
     <Router>
       <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white flex flex-col transition-colors duration-300">
-        {/* Dark mode toggle */}
         <button
           aria-label="Toggle dark mode"
           className="fixed bottom-4 right-4 p-3 rounded-full bg-gray-200 dark:bg-gray-700 shadow-lg z-50 hover:scale-110 transition-transform duration-200"
           onClick={() => setDarkMode(!darkMode)}
         >
-          {darkMode ? (
-            <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.71-.71M6.34 6.34l-.71-.71m12.72 0l-.71.71M6.34 17.66l-.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          ) : (
-            <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
-            </svg>
-          )}
+          {/* Toggle icon */}
         </button>
 
-        {/* Navbar */}
         <React.Suspense fallback={<div className="h-16 bg-gray-900"></div>}>
           <Navbar />
         </React.Suspense>
 
         <Routes>
-          <Route 
-            path="/" 
-            element={
-              <MainApp 
-                skills={skills} 
-                projects={projects} 
-                testimonials={testimonials}
-                fadeInUp={fadeInUp}
-                staggerContainer={staggerContainer}
-              />
-            } 
-          />
+          <Route path="/" element={<MainApp skills={skills} projects={projects} testimonials={testimonials} fadeInUp={fadeInUp} staggerContainer={staggerContainer} />} />
           <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route path="/admin" element={<PrivateRoute><AdminPanel /></PrivateRoute>} /> {/* ✅ Protected */}
         </Routes>
 
-        {/* Footer */}
         <Footer />
       </div>
     </Router>
