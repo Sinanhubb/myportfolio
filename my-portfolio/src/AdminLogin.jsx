@@ -13,7 +13,7 @@ const AdminLogin = () => {
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
     if (token) {
-      navigate('/admin');
+      navigate('/admin'); // Automatically redirect if logged in
     }
   }, [navigate]);
 
@@ -28,14 +28,25 @@ const AdminLogin = () => {
         password,
       });
 
+      // Check for a valid token in the response
       if (res.data?.token) {
         localStorage.setItem('admin_token', res.data.token);
-        navigate('/admin');
+        navigate('/admin'); // Redirect to admin dashboard
       } else {
         setError('Login failed: Invalid response');
       }
     } catch (err) {
-      setError('Invalid credentials');
+      console.error('Login error:', err); // Log error details for debugging
+      if (err.response) {
+        // Detailed error handling based on the response status
+        if (err.response.status === 401) {
+          setError('Invalid credentials. Please try again.');
+        } else {
+          setError('Something went wrong. Please try again.');
+        }
+      } else {
+        setError('Unable to reach the server. Please check your connection.');
+      }
     } finally {
       setLoading(false);
     }
