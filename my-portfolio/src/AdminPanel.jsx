@@ -3,14 +3,12 @@ import axios from 'axios';
 import { format } from 'date-fns';
 import { isValidToken } from './utils/auth'; // correct the path if needed
 
-
 const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [apiMode, setApiMode] = useState('live'); // 'live' or 'mock'
-  
 
   const API_BASE =
     import.meta.env?.VITE_API_BASE_URL ||
