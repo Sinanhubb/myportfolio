@@ -13,15 +13,13 @@ const PORT = process.env.PORT || 10000;
 const allowedOrigins = [
   'http://localhost:3000', 
   'https://sinanportfolioo.netlify.app',
-  'https://www.sinanportfolioo.netlify.app' // Added www variant
+  'https://www.sinanportfolioo.netlify.app'
 ];
 
 // Enhanced CORS configuration
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
     if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -34,20 +32,18 @@ const corsOptions = {
   credentials: true,
   preflightContinue: false,
   optionsSuccessStatus: 204,
-  maxAge: 86400 // 24 hours
+  maxAge: 86400
 };
 
 // Apply CORS middleware
 app.use(cors(corsOptions));
-
-// Handle preflight requests
 app.options('*', cors(corsOptions));
 
-// Middleware
+// Parse JSON and URL-encoded bodies
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Additional headers middleware
+// Additional headers for CORS
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
@@ -57,12 +53,7 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Max-Age', '86400');
   }
-  
-  // Intercept OPTIONS method
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-  
+  if (req.method === 'OPTIONS') return res.status(200).end();
   next();
 });
 
@@ -73,7 +64,7 @@ const authenticate = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.role !== 'admin') throw new Error();
+    if (decoded.role !== 'admin') throw new Error('Not an admin');
     next();
   } catch (err) {
     res.status(403).json({ message: 'Forbidden' });
@@ -82,23 +73,24 @@ const authenticate = (req, res, next) => {
 
 // PostgreSQL setup
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://portfolio_data_0ma3_user:0DOKNQen1SouEXOm1EkQ028jPYOd3BNF@dpg-d0g3fck9c44c73f934r0-a/portfolio_data_0ma3',
+  connectionString: process.env.DATABASE_URL ||
+    'postgresql://portfolio_data_0ma3_user:0DOKNQen1SouEXOm1EkQ028jPYOd3BNF@dpg-d0g3fck9c44c73f934r0-a/portfolio_data_0ma3',
   ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+});
+
+// Test database connection on startup
+pool.query('SELECT NOW()', (err) => {
+  if (err) console.error('❌ Database connection error:', err);
+  else console.log('✅ Database connected successfully');
 });
 
 // Nodemailer setup
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.EMAIL_USER || 'htmlvjec@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'eoih qzhm vunf pmsc',
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD,
   },
-});
-
-// Test database connection
-pool.query('SELECT NOW()', (err) => {
-  if (err) console.error('❌ Database connection error:', err);
-  else console.log('✅ Database connected successfully');
 });
 
 // Root route
@@ -106,64 +98,37 @@ app.get('/', (req, res) => {
   res.send('✅ Portfolio backend is running!');
 });
 
-// Contact form route with explicit OPTIONS handler
+// Contact form route
 app.options('/api/contact', cors(corsOptions));
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
-
-  // Basic validation
   if (!name || !email || !message) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'All fields are required' 
-    });
+    return res.status(400).json({ success: false, message: 'All fields are required' });
   }
-
   try {
-    // Insert into database
     await pool.query(
       'INSERT INTO contact_form (name, email, message) VALUES ($1, $2, $3)',
       [name, email, message]
     );
-
-    // Send confirmation email
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: 'Thanks for contacting!',
-      html: `
-        <div>
-          <h2>Hi ${name},</h2>
-          <p>Thank you for your message:</p>
-          <blockquote>${message}</blockquote>
-          <p>I'll be in touch soon.</p>
-          <br><p>— Portfolio Site</p>
-        </div>
-      `
+      html: `<div><h2>Hi ${name},</h2><p>Thank you for your message:</p><blockquote>${message}</blockquote><p>I'll be in touch soon.</p><br><p>— Portfolio Site</p></div>`
     });
-
-    res.status(201).json({ 
-      success: true, 
-      message: 'Form submitted and email sent' 
-    });
+    res.status(201).json({ success: true, message: 'Form submitted and email sent' });
   } catch (err) {
     console.error('❌ Contact Error:', err);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error', 
-      error: err.message 
-    });
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
   }
 });
 
 // Admin login to generate JWT
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
-
   if (!username || !password) {
     return res.status(400).json({ message: 'Username and password required' });
   }
-
   if (
     username === process.env.ADMIN_USERNAME &&
     password === process.env.ADMIN_PASSWORD
@@ -179,31 +144,24 @@ app.post('/api/admin/login', (req, res) => {
 app.options('/api/submissions', cors(corsOptions));
 app.get('/api/submissions', authenticate, async (req, res) => {
   try {
-    const result = await pool.query(
-      'SELECT * FROM contact_form ORDER BY submitted_at DESC'
-    );
+    console.log('🔍 Fetching submissions...');
+    // Removed ORDER BY submitted_at if column doesn't exist
+    const result = await pool.query('SELECT * FROM contact_form');
+    console.log(`✅ Retrieved ${result.rows.length} submissions`);
     res.json(result.rows);
   } catch (err) {
     console.error('❌ Submissions Error:', err);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Failed to fetch submissions' 
-    });
+    res.status(500).json({ success: false, message: 'Failed to fetch submissions', error: err.message });
   }
 });
 
-// Error handling middleware
+// Global error handler
 app.use((err, req, res, next) => {
   console.error('❌ Global Error Handler:', err);
-  
   if (err.name === 'UnauthorizedError') {
     return res.status(401).json({ message: 'Invalid token' });
   }
-  
-  res.status(500).json({ 
-    success: false, 
-    message: 'Internal server error' 
-  });
+  res.status(500).json({ success: false, message: 'Internal server error' });
 });
 
 // Start server
