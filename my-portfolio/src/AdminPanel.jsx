@@ -7,6 +7,7 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [apiMode, setApiMode] = useState('live'); // 'live' or 'mock'
 
   const API_BASE =
     import.meta.env?.VITE_API_BASE_URL ||
@@ -27,14 +28,48 @@ const AdminPanel = () => {
       localStorage.removeItem('admin_token');
       window.location.href = '/admin-login';
     } else if (err.code === 'ECONNABORTED') {
-      setError('Request timeout. Please try again.');
+      setError('Request timeout. Switching to demo mode with sample data.');
+      setApiMode('mock');
+      loadMockData();
     } else if (err.message === 'Network Error') {
-      setError('Network connection failed. Check your internet.');
+      setError('Network connection failed. Switched to demo mode with sample data.');
+      setApiMode('mock');
+      loadMockData();
     } else if (err.response?.data?.message) {
       setError(`Server error: ${err.response.data.message}`);
     } else {
       setError(err.message || 'Failed to fetch submissions. Please try again.');
     }
+  };
+
+  // Load mock data when API fails
+  const loadMockData = () => {
+    const mockSubmissions = [
+      {
+        id: '1',
+        name: 'John Doe',
+        email: 'john.doe@example.com',
+        message: 'I really like your portfolio! Would love to discuss a potential project.',
+        submitted_at: new Date(Date.now() - 3600000).toISOString() // 1 hour ago
+      },
+      {
+        id: '2',
+        name: 'Jane Smith',
+        email: 'jane.smith@example.com',
+        message: 'Hi there! Are you available for freelance work next month? We need a developer for our new website.',
+        submitted_at: new Date(Date.now() - 86400000).toISOString() // 1 day ago
+      },
+      {
+        id: '3',
+        name: 'Alex Johnson',
+        email: 'alex@company.com',
+        message: 'Your work looks impressive! I'd like to schedule a call to discuss a potential collaboration.',
+        submitted_at: new Date(Date.now() - 172800000).toISOString() // 2 days ago
+      }
+    ];
+    
+    setSubmissions(mockSubmissions);
+    setLoading(false);
   };
 
   const fetchSubmissions = useCallback(async () => {
@@ -47,6 +82,11 @@ const AdminPanel = () => {
       if (!validateToken(token)) {
         localStorage.removeItem('admin_token');
         window.location.href = '/admin-login';
+        return;
+      }
+
+      if (apiMode === 'mock') {
+        loadMockData();
         return;
       }
 
@@ -73,7 +113,7 @@ const AdminPanel = () => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE]);
+  }, [API_BASE, apiMode]);
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -114,6 +154,19 @@ const AdminPanel = () => {
     sub.message.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Toggle between API modes
+  const toggleApiMode = () => {
+    const newMode = apiMode === 'live' ? 'mock' : 'live';
+    setApiMode(newMode);
+    setError(null);
+    
+    if (newMode === 'mock') {
+      loadMockData();
+    } else {
+      fetchSubmissions();
+    }
+  };
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-12 px-4 text-gray-800 dark:text-white">
       <div className="max-w-4xl mx-auto">
@@ -122,13 +175,23 @@ const AdminPanel = () => {
             📥 Admin Panel – {loading ? '...' : filteredSubmissions.length} Submission
             {filteredSubmissions.length !== 1 && 's'}
           </h1>
-          <div className="flex gap-2 w-full sm:w-auto">
+          <div className="flex flex-wrap gap-2 w-full sm:w-auto">
             <button
               onClick={fetchSubmissions}
               className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               disabled={loading}
             >
               {loading ? 'Refreshing...' : '⟳ Refresh'}
+            </button>
+            <button
+              onClick={toggleApiMode}
+              className={`px-4 py-2 rounded transition-colors ${
+                apiMode === 'live' 
+                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                  : 'bg-yellow-500 text-white hover:bg-yellow-600'
+              }`}
+            >
+              {apiMode === 'live' ? '🔄 Live Data' : '📋 Demo Data'}
             </button>
             <button
               onClick={exportToCSV}
@@ -157,16 +220,14 @@ const AdminPanel = () => {
         </div>
 
         {error && (
-          <div className="p-4 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-lg mb-4">
-            <p className="font-medium">Error:</p>
+          <div className="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 rounded-lg mb-4">
+            <p className="font-medium">Notice:</p>
             <p>{error}</p>
-            <button
-              onClick={fetchSubmissions}
-              className="mt-2 px-3 py-1 bg-red-600 text-white rounded text-sm"
-              disabled={loading}
-            >
-              {loading ? 'Retrying...' : 'Retry'}
-            </button>
+            {apiMode === 'mock' && (
+              <p className="mt-2 text-sm">
+                Showing sample data. You can switch back to live data using the "Live Data" button.
+              </p>
+            )}
           </div>
         )}
 
