@@ -10,27 +10,19 @@ const AdminLogin = () => {
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Hardcoded credentials
+    // Hardcoded credentials (for testing purposes)
     const adminUsername = 'admin';
     const adminPassword = 'admin123';
 
     if (username === adminUsername && password === adminPassword) {
-      // Save token to localStorage and redirect
+      // Store token in localStorage
       localStorage.setItem('admin_token', 'dummy-token');
-      setUsername(''); // Clear the form inputs
-      setPassword('');
-      setError(''); // Clear any previous errors
-      navigate('/admin'); // Redirect to Admin Panel
+      // Redirect to Admin Panel
+      navigate('/admin');
     } else {
+      // Show error if credentials are incorrect
       setError('Invalid username or password');
     }
-  };
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'username') setUsername(value);
-    if (name === 'password') setPassword(value);
-    if (error) setError(''); // Clear the error when the user types
   };
 
   return (
@@ -42,10 +34,9 @@ const AdminLogin = () => {
             <label className="block text-gray-700 dark:text-gray-200">Username</label>
             <input
               type="text"
-              name="username"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={username}
-              onChange={handleInputChange}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
@@ -54,10 +45,9 @@ const AdminLogin = () => {
             <label className="block text-gray-700 dark:text-gray-200">Password</label>
             <input
               type="password"
-              name="password"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={password}
-              onChange={handleInputChange}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
