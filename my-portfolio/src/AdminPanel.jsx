@@ -63,7 +63,7 @@ const AdminPanel = () => {
         id: '3',
         name: 'Alex Johnson',
         email: 'alex@company.com',
-        message: 'Your work looks impressive! I'd like to schedule a call to discuss a potential collaboration.',
+        message: "Your work looks impressive! I'd like to schedule a call to discuss a potential collaboration.",
         submitted_at: new Date(Date.now() - 172800000).toISOString() // 2 days ago
       }
     ];
