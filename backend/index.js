@@ -9,7 +9,7 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// ✅ Use cors package for proper CORS handling
+// ✅ CORS setup
 const allowedOrigins = ['http://localhost:3000', 'https://sinanportfolioo.netlify.app'];
 const corsOptions = {
   origin: function (origin, callback) {
@@ -25,10 +25,11 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
+
 // Middleware
 app.use(bodyParser.json());
 
-// JWT middleware for admin access
+// JWT middleware
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Missing token' });
@@ -42,16 +43,12 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// PostgreSQL setup
+// PostgreSQL
 const pool = new Pool({
-  user: process.env.DB_USER || 'portfolio_data_0ma3_user',
-  host: process.env.DB_HOST || 'dpg-db93fc9kc04c73f934f0-a',
-  database: process.env.DB_NAME || 'portfolio_data_0ma3',
-  password: process.env.DB_PASSWORD || '0DOKNQen1SouEXOm1EkQ028jPYOd3BNF',
-  port: process.env.DB_PORT || 5432,
+  connectionString: process.env.DATABASE_URL || 'postgresql://portfolio_data_0ma3_user:0DOKNQen1SouEXOm1EkQ028jPYOd3BNF@dpg-d0g3fck9c44c73f934r0-a/portfolio_data_0ma3',
 });
 
-// Nodemailer setup
+// Nodemailer
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -116,10 +113,10 @@ app.post('/api/admin/login', (req, res) => {
   }
 });
 
-// Admin-only route to fetch submissions
+// ✅ Fixed this route (was using non-existent 'submitted_at' column)
 app.get('/api/submissions', authenticate, async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM contact_form ORDER BY submitted_at DESC');
+    const result = await pool.query('SELECT * FROM contact_form ORDER BY created_at DESC');
     res.json(result.rows);
   } catch (err) {
     console.error('❌ Submissions Error:', err);
