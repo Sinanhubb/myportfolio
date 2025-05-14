@@ -8,6 +8,7 @@ import Contact from "./Contact";
 import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
+import { PrivateRoute } from './PrivateRoute';
 
 // Lazy load Navbar
 const Navbar = React.lazy(() => import("./Navbar"));
@@ -208,21 +209,26 @@ function App() {
         </React.Suspense>
 
         <Routes>
-          <Route 
-            path="/" 
-            element={
-              <MainApp 
-                skills={skills} 
-                projects={projects} 
-                testimonials={testimonials}
-                fadeInUp={fadeInUp}
-                staggerContainer={staggerContainer}
-              />
-            } 
-          />
-          <Route path="/admin-login" element={<AdminLogin />} />
+        <Route 
+          path="/" 
+          element={
+            <MainApp 
+              skills={skills} 
+              projects={projects} 
+              testimonials={testimonials}
+              fadeInUp={fadeInUp}
+              staggerContainer={staggerContainer}
+            />
+          } 
+        />
+        <Route path="/admin-login" element={<AdminLogin />} />
+        
+        {/* ✅ Secure admin route */}
+        <Route element={<PrivateRoute />}>
           <Route path="/admin" element={<AdminPanel />} />
-        </Routes>
+        </Route>
+      </Routes>
+
 
         {/* Footer */}
         <Footer />

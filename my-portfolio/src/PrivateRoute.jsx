@@ -1,18 +1,21 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 
 export const PrivateRoute = () => {
-  const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  // Show loading state if we're still checking authentication
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const token = localStorage.getItem('admin_token');
 
-  // Redirect to login if not authenticated
-  return isAuthenticated ? 
-    <Outlet /> : 
-    <Navigate to="/admin-login" state={{ from: location }} replace />;
+  // Token validation
+  const isValidToken =
+    token &&
+    typeof token === 'string' &&
+    token.length > 30 &&
+    !['undefined', 'null', 'dummy-token'].includes(token);
+
+  return isValidToken ? (
+    <Outlet />
+  ) : (
+    <Navigate to="/admin-login" state={{ from: location }} replace />
+  );
 };

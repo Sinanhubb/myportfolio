@@ -41,7 +41,8 @@ const AdminLogin = () => {
       setError(''); 
       
       // Navigate to admin page with replace to prevent back navigation
-      window.location.href = '/admin'; // Using direct navigation to force full page reload
+      navigate('/admin', { replace: true });
+ // Using direct navigation to force full page reload
     } else {
       setError('Invalid username or password');
     }
