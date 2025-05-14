@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const navigate = useNavigate(); // For navigation
 
-  // ✅ Enhanced environment variable handling with fallbacks
+  // Dynamic API base URL (Vite + Netlify + Local)
   const API_BASE = (() => {
     if (import.meta.env?.VITE_API_BASE_URL) {
       return import.meta.env.VITE_API_BASE_URL;
@@ -24,37 +22,47 @@ const AdminPanel = () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const token = localStorage.getItem('admin_token');
         if (!token) {
           throw new Error('No authentication token found');
         }
 
         const response = await axios.get(`${API_BASE}/api/submissions`, {
-          headers: { Authorization: `Bearer ${token}` },
-          timeout: 10000, // 10 second timeout
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          timeout: 10000, // 10-second timeout
         });
 
-        setSubmissions(response.data);
-      } catch (err) {
-        console.error('Error details:', {
-          message: err.message,
-          code: err.code,
-          response: err.response?.data,
-        });
-
-        if (err.response?.status === 401 || err.response?.status === 403) {
-          setError('Session expired. Please login again.');
-          setTimeout(() => {
-            localStorage.removeItem('admin_token');
-            navigate('/admin-login'); // Use navigate to redirect
-          }, 2000);
-        } else if (err.code === 'ECONNABORTED') {
-          setError('Request timeout. Please check your connection.');
-        } else if (err.message === 'Network Error') {
-          setError('Cannot connect to server. Please try again later.');
+        // Ensure response data is an array
+        if (Array.isArray(response.data)) {
+          // Handle potential missing `submitted_at` (fallback to `created_at` or similar)
+          const formattedSubmissions = response.data.map(sub => ({
+            ...sub,
+            submitted_at: sub.submitted_at || sub.created_at || new Date().toISOString(),
+          }));
+          setSubmissions(formattedSubmissions);
         } else {
-          setError(err.response?.data?.message || err.message || 'Failed to fetch submissions');
+          throw new Error('Unexpected response format');
+        }
+      } catch (err) {
+        console.error('Fetch error:', err);
+        console.error('Error details:', JSON.stringify(err, null, 2)); // Log detailed error
+
+        // Enhanced error handling
+        if (err.response) {
+          if (err.response.status === 500) {
+            setError('Server error: Database query failed (check backend logs)');
+          } else {
+            setError(`Server error: ${err.response.status} - ${err.response.data?.message || 'Unknown error'}`);
+          }
+        } else if (err.code === 'ECONNABORTED') {
+          setError('Request timeout. Server might be busy.');
+        } else if (err.message === 'Network Error') {
+          setError('Cannot connect to server. Check your internet.');
+        } else {
+          setError(err.message || 'Failed to load submissions.');
         }
       } finally {
         setLoading(false);
@@ -62,11 +70,11 @@ const AdminPanel = () => {
     };
 
     fetchSubmissions();
-  }, [API_BASE, navigate]); // Add navigate as a dependency
+  }, [API_BASE]);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
-    navigate('/admin-login');
+    window.location.href = '/admin-login';
   };
 
   return (
@@ -118,8 +126,9 @@ const AdminPanel = () => {
                     {s.email}
                   </p>
                 </div>
+                {/* Fallback for missing `submitted_at` */}
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {new Date(s.submitted_at).toLocaleString()}
+                  {s.submitted_at ? new Date(s.submitted_at).toLocaleString() : 'No date'}
                 </p>
               </div>
               <p className="mt-3 whitespace-pre-wrap">{s.message}</p>
