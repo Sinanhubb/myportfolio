@@ -1,16 +1,37 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cors = require('cors');
 const { Pool } = require('pg');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
-
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// JWT middleware
+// ✅ Enhanced CORS Middleware
+const allowedOrigins = ['http://localhost:3000', 'https://sinanportfolioo.netlify.app'];
+
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+
+  // Handle preflight
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  next();
+});
+
+// Middleware
+app.use(bodyParser.json());
+
+// JWT middleware for admin access
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Missing token' });
@@ -23,14 +44,6 @@ const authenticate = (req, res, next) => {
     res.status(403).json({ message: 'Forbidden' });
   }
 };
-
-// Middleware
-app.use(cors({
-  origin: ['http://localhost:3000', 'https://sinanportfolioo.netlify.app'], // Replace with your actual frontend
-  methods: ['GET', 'POST'],
-  credentials: true,
-}));
-app.use(bodyParser.json());
 
 // PostgreSQL setup
 const pool = new Pool({
@@ -55,7 +68,7 @@ app.get('/', (req, res) => {
   res.send('✅ Portfolio backend is running!');
 });
 
-// Submit contact form
+// Contact form route
 app.post('/api/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
@@ -87,7 +100,7 @@ app.post('/api/contact', async (req, res) => {
   }
 });
 
-// Admin login for token
+// Admin login to generate JWT
 app.post('/api/admin/login', (req, res) => {
   const { username, password } = req.body;
 
@@ -106,7 +119,7 @@ app.post('/api/admin/login', (req, res) => {
   }
 });
 
-// View all form submissions (admin)
+// Admin-only route to fetch submissions
 app.get('/api/submissions', authenticate, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM contact_form ORDER BY submitted_at DESC');
