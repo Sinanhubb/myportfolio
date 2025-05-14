@@ -10,6 +10,7 @@ const AdminPanel = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [apiMode, setApiMode] = useState('live'); // 'live' or 'mock'
+  
 
   const API_BASE =
     import.meta.env?.VITE_API_BASE_URL ||
@@ -17,7 +18,11 @@ const AdminPanel = () => {
       ? 'https://myportfolio-oflk.onrender.com'
       : 'http://localhost:5000');
 
-  
+  const validateToken = (token) =>
+    token &&
+    typeof token === 'string' &&
+    token.length > 30 &&
+    !['undefined', 'null', 'dummy-token'].includes(token);
 
   // Load mock data when API fails
   const loadMockData = useCallback(() => {
