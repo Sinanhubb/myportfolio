@@ -1,14 +1,8 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { validateToken } from './AdminLogin';
 
 const PrivateRoute = ({ children }) => {
-  // Match the validateToken function from AdminPanel.jsx exactly
-  const validateToken = (token) =>
-    token &&
-    typeof token === 'string' &&
-    token.length > 30 &&
-    !['undefined', 'null', 'dummy-token'].includes(token);
-
   const token = localStorage.getItem('admin_token');
   const isAuthenticated = validateToken(token);
 

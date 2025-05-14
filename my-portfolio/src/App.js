@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import About from "./About";
 import Projects from "./Projects";
@@ -8,6 +8,7 @@ import Contact from "./Contact";
 import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
+import PrivateRoute from "./PrivateRoute";
 
 // Lazy load Navbar
 const Navbar = React.lazy(() => import("./Navbar"));
@@ -221,7 +222,14 @@ function App() {
             } 
           />
           <Route path="/admin-login" element={<AdminLogin />} />
-          <Route path="/admin" element={<AdminPanel />} />
+          <Route 
+            path="/admin" 
+            element={
+              <PrivateRoute>
+                <AdminPanel />
+              </PrivateRoute>
+            } 
+          />
         </Routes>
 
         {/* Footer */}

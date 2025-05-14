@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { validateToken } from './AdminLogin';
 
 const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
@@ -14,12 +15,6 @@ const AdminPanel = () => {
     (window?.location?.hostname?.includes('netlify')
       ? 'https://myportfolio-oflk.onrender.com'
       : 'http://localhost:5000');
-
-  const validateToken = (token) =>
-    token &&
-    typeof token === 'string' &&
-    token.length > 30 &&
-    !['undefined', 'null', 'dummy-token'].includes(token);
 
   // Load mock data when API fails
   const loadMockData = useCallback(() => {
@@ -113,11 +108,6 @@ const AdminPanel = () => {
   }, [API_BASE, apiMode, handleApiError, loadMockData]);
 
   useEffect(() => {
-    const token = localStorage.getItem('admin_token');
-    if (!validateToken(token)) {
-      window.location.href = '/admin-login';
-      return;
-    }
     fetchSubmissions();
   }, [fetchSubmissions]);
 

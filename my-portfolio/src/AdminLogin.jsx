@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Create a reusable function for token validation
+export const validateToken = (token) =>
+  token &&
+  typeof token === 'string' &&
+  token.length > 30 &&
+  !['undefined', 'null', 'dummy-token'].includes(token);
+
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  
-  // Define validateToken to match your AdminPanel component
-  const validateToken = (token) =>
-    token &&
-    typeof token === 'string' &&
-    token.length > 30 &&
-    !['undefined', 'null', 'dummy-token'].includes(token);
   
   // Check if user is already logged in
   useEffect(() => {
@@ -40,8 +40,8 @@ const AdminLogin = () => {
       setPassword('');
       setError(''); 
       
-      // Navigate to admin page with replace to prevent back navigation
-      window.location.href = '/admin'; // Using direct navigation to force full page reload
+      // Use the navigate function instead of direct window.location
+      navigate('/admin', { replace: true });
     } else {
       setError('Invalid username or password');
     }
