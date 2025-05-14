@@ -6,24 +6,54 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
-
+  
+  // Define validateToken to match your AdminPanel component
+  const validateToken = (token) =>
+    token &&
+    typeof token === 'string' &&
+    token.length > 30 &&
+    !['undefined', 'null', 'dummy-token'].includes(token);
+  
+  // Check if user is already logged in
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
-    if (token && token !== 'undefined' && token !== 'null') {
+    if (validateToken(token)) {
       navigate('/admin', { replace: true });
     }
   }, [navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'admin123') {
-      localStorage.setItem('admin_token', 'admin-token'); // Simple token
-      navigate('/admin'); // ✅ Use navigate, not window.location
+    
+    // Hardcoded credentials
+    const adminUsername = 'admin';
+    const adminPassword = 'admin123';
+    
+    if (username === adminUsername && password === adminPassword) {
+      // Generate a token that will pass validation (length > 30)
+      const mockToken = `admin-${Date.now()}-${Math.random().toString(36).substring(2, 15)}-${Math.random().toString(36).substring(2, 15)}`;
+      
+      // Store in localStorage
+      localStorage.setItem('admin_token', mockToken);
+      
+      setUsername(''); // Clear form inputs
+      setPassword('');
+      setError(''); 
+      
+      // Navigate to admin page with replace to prevent back navigation
+      window.location.href = '/admin'; // Using direct navigation to force full page reload
     } else {
       setError('Invalid username or password');
     }
   };
-
+  
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'username') setUsername(value);
+    if (name === 'password') setPassword(value);
+    if (error) setError(''); // Clear error when user types
+  };
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-sm w-full">
@@ -36,11 +66,11 @@ const AdminLogin = () => {
               name="username"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={handleInputChange}
               required
             />
           </div>
-
+          
           <div className="mb-4">
             <label className="block text-gray-700 dark:text-gray-200">Password</label>
             <input
@@ -48,13 +78,13 @@ const AdminLogin = () => {
               name="password"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleInputChange}
               required
             />
           </div>
-
+          
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
+          
           <button
             type="submit"
             className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
