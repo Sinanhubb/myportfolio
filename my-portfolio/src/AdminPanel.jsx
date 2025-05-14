@@ -21,7 +21,8 @@ const AdminPanel = () => {
     token.length > 30 &&
     !['undefined', 'null', 'dummy-token'].includes(token);
 
-  const handleApiError = (err) => {
+  // Function to handle API errors
+  const handleApiError = useCallback((err) => {
     console.error('API Error:', err);
 
     if (err.response?.status === 401 || err.response?.status === 403) {
@@ -40,10 +41,10 @@ const AdminPanel = () => {
     } else {
       setError(err.message || 'Failed to fetch submissions. Please try again.');
     }
-  };
+  }, [loadMockData, setApiMode]);
 
   // Load mock data when API fails
-  const loadMockData = () => {
+  const loadMockData = useCallback(() => {
     const mockSubmissions = [
       {
         id: '1',
@@ -70,7 +71,7 @@ const AdminPanel = () => {
     
     setSubmissions(mockSubmissions);
     setLoading(false);
-  };
+  }, []);
 
   const fetchSubmissions = useCallback(async () => {
     try {
@@ -113,7 +114,7 @@ const AdminPanel = () => {
     } finally {
       setLoading(false);
     }
-  }, [API_BASE, apiMode]);
+  }, [API_BASE, apiMode, handleApiError, loadMockData]);
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -155,7 +156,7 @@ const AdminPanel = () => {
   );
 
   // Toggle between API modes
-  const toggleApiMode = () => {
+  const toggleApiMode = useCallback(() => {
     const newMode = apiMode === 'live' ? 'mock' : 'live';
     setApiMode(newMode);
     setError(null);
@@ -165,7 +166,7 @@ const AdminPanel = () => {
     } else {
       fetchSubmissions();
     }
-  };
+  }, [apiMode, loadMockData, fetchSubmissions]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-12 px-4 text-gray-800 dark:text-white">
