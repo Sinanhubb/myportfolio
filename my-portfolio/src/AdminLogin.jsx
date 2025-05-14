@@ -1,32 +1,36 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 
 const AdminLogin = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
+  const handleLogin = (e) => {
     e.preventDefault();
 
-    try {
-      const response = await axios.post('https://your-api-url.com/admin/login', {
-        email,
-        password,
-      });
+    // Hardcoded credentials
+    const adminUsername = 'admin';
+    const adminPassword = 'admin123';
 
-      if (response.data.token) {
-        // Save the token and redirect
-        localStorage.setItem('admin_token', response.data.token);
-        navigate('/admin');
-      } else {
-        setError('Login failed. Please try again.');
-      }
-    } catch (err) {
-      setError('An error occurred during login. Please try again.');
+    if (username === adminUsername && password === adminPassword) {
+      // Save token to localStorage and redirect
+      localStorage.setItem('admin_token', 'dummy-token');
+      setUsername(''); // Clear the form inputs
+      setPassword('');
+      setError(''); // Clear any previous errors
+      navigate('/admin'); // Redirect to Admin Panel
+    } else {
+      setError('Invalid username or password');
     }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    if (name === 'username') setUsername(value);
+    if (name === 'password') setPassword(value);
+    if (error) setError(''); // Clear the error when the user types
   };
 
   return (
@@ -35,13 +39,13 @@ const AdminLogin = () => {
         <h1 className="text-2xl font-semibold text-center mb-4">Admin Login</h1>
         <form onSubmit={handleLogin}>
           <div className="mb-4">
-            <label className="block text-gray-700 dark:text-gray-200">Email</label>
+            <label className="block text-gray-700 dark:text-gray-200">Username</label>
             <input
-              type="email"
-              name="email"
+              type="text"
+              name="username"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={handleInputChange}
               required
             />
           </div>
@@ -53,7 +57,7 @@ const AdminLogin = () => {
               name="password"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handleInputChange}
               required
             />
           </div>
