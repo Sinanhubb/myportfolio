@@ -9,27 +9,16 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// ✅ CORS setup
-const allowedOrigins = ['http://localhost:3000', 'https://sinanportfolioo.netlify.app'];
-const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+// ✅ Use CORS at the top and simplify
+app.use(cors({
+  origin: ['https://sinanportfolioo.netlify.app', 'http://localhost:3000'],
   credentials: true
-};
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions));
+}));
 
 // Middleware
 app.use(bodyParser.json());
 
-// JWT middleware
+// JWT middleware for admin access
 const authenticate = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Missing token' });
@@ -43,12 +32,12 @@ const authenticate = (req, res, next) => {
   }
 };
 
-// PostgreSQL
+// PostgreSQL setup
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://portfolio_data_0ma3_user:0DOKNQen1SouEXOm1EkQ028jPYOd3BNF@dpg-d0g3fck9c44c73f934r0-a/portfolio_data_0ma3',
 });
 
-// Nodemailer
+// Nodemailer setup
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -113,7 +102,7 @@ app.post('/api/admin/login', (req, res) => {
   }
 });
 
-// ✅ Fixed this route (was using non-existent 'submitted_at' column)
+// Admin-only route to fetch submissions
 app.get('/api/submissions', authenticate, async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM contact_form ORDER BY created_at DESC');
