@@ -1,138 +1,84 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-const AdminPanel = () => {
-  const [submissions, setSubmissions] = useState([]);
-  const [loading, setLoading] = useState(true);
+const AdminLoginPage = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  // Dynamic API base URL (Vite + Netlify + Local)
-  const API_BASE = (() => {
-    if (import.meta.env?.VITE_API_BASE_URL) {
-      return import.meta.env.VITE_API_BASE_URL;
-    }
-    if (window.location.hostname.includes('netlify')) {
-      return 'https://myportfolio-oflk.onrender.com';
-    }
-    return 'http://localhost:5000';
-  })();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
 
-  useEffect(() => {
-    const fetchSubmissions = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+    try {
+      const response = await axios.post('/api/admin-login', { email, password });
 
-        const token = localStorage.getItem('admin_token');
-        if (!token) {
-          throw new Error('No authentication token found');
-        }
-
-        const response = await axios.get(`${API_BASE}/api/submissions`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          timeout: 10000, // 10-second timeout
-        });
-
-        // Handle potential missing `submitted_at` (fallback to `created_at` or similar)
-        const formattedSubmissions = response.data.map(sub => ({
-          ...sub,
-          submitted_at: sub.submitted_at || sub.created_at || new Date().toISOString(),
-        }));
-
-        setSubmissions(formattedSubmissions);
-      } catch (err) {
-        console.error('Fetch error:', err);
-
-        // Enhanced error handling
-        if (err.response) {
-          if (err.response.status === 500) {
-            setError('Server error: Database query failed (check backend logs)');
-          } else {
-            setError(`Server error: ${err.response.status} - ${err.response.data?.message || 'Unknown error'}`);
-          }
-        } else if (err.code === 'ECONNABORTED') {
-          setError('Request timeout. Server might be busy.');
-        } else if (err.message === 'Network Error') {
-          setError('Cannot connect to server. Check your internet.');
-        } else {
-          setError(err.message || 'Failed to load submissions.');
-        }
-      } finally {
-        setLoading(false);
+      // Assuming the response contains a token
+      if (response.data.token) {
+        localStorage.setItem('admin_token', response.data.token);
+        navigate('/admin-panel');  // Redirect to the admin panel after login
       }
-    };
-
-    fetchSubmissions();
-  }, [API_BASE]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('admin_token');
-    window.location.href = '/admin-login';
+    } catch (err) {
+      setLoading(false);
+      if (err.response) {
+        setError('Invalid credentials, please try again.');
+      } else {
+        setError('Something went wrong, please try again later.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 py-12 px-4 text-gray-800 dark:text-white">
-      <div className="flex justify-between items-center max-w-4xl mx-auto mb-6">
-        <h1 className="text-3xl font-bold">
-          📥 Admin Panel – {loading ? '...' : submissions.length} 
-          Submission{submissions.length !== 1 && 's'}
-        </h1>
-        <button
-          onClick={handleLogout}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-          aria-label="Logout"
-        >
-          Logout
-        </button>
-      </div>
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center py-12 px-4 text-gray-800 dark:text-white">
+      <div className="w-full max-w-md bg-gray-100 dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+        <h2 className="text-2xl font-semibold text-center mb-6">Admin Login</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+            <input
+              type="email"
+              id="email"
+              className="mt-2 p-2 w-full border border-gray-300 dark:border-gray-600 rounded-lg"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+            <input
+              type="password"
+              id="password"
+              className="mt-2 p-2 w-full border border-gray-300 dark:border-gray-600 rounded-lg"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-      <div className="grid gap-6 max-w-4xl mx-auto">
-        {error ? (
-          <div className="p-4 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-lg">
-            <p className="font-medium">Error:</p>
-            <p>{error}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="mt-2 px-3 py-1 bg-red-600 text-white rounded text-sm"
-            >
-              Retry
-            </button>
-          </div>
-        ) : loading ? (
-          <div className="flex justify-center items-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-          </div>
-        ) : submissions.length === 0 ? (
-          <p className="text-center text-gray-500 dark:text-gray-400 py-8">
-            No submissions yet.
-          </p>
-        ) : (
-          submissions.map((s) => (
-            <div
-              key={s.id || `${s.email}-${s.submitted_at}`}
-              className="p-6 rounded-xl bg-gray-100 dark:bg-gray-800 shadow hover:shadow-md transition"
-            >
-              <div className="flex justify-between items-start">
-                <div>
-                  <h2 className="text-xl font-semibold">{s.name}</h2>
-                  <p className="text-sm text-blue-600 dark:text-blue-400 break-all">
-                    {s.email}
-                  </p>
-                </div>
-                {/* Fallback for missing `submitted_at` */}
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {s.submitted_at ? new Date(s.submitted_at).toLocaleString() : 'No date'}
-                </p>
-              </div>
-              <p className="mt-3 whitespace-pre-wrap">{s.message}</p>
+          {error && (
+            <div className="mb-4 text-red-600 dark:text-red-400 text-center">
+              <p>{error}</p>
             </div>
-          ))
-        )}
+          )}
+
+          <button
+            type="submit"
+            className={`w-full py-2 px-4 text-white rounded-lg transition-colors ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+        </form>
       </div>
     </div>
   );
 };
 
-export default AdminPanel;
+export default AdminLoginPage;

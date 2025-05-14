@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // For navigation
 
   // ✅ Enhanced environment variable handling with fallbacks
   const API_BASE = (() => {
-    // Try Vite environment variable first
     if (import.meta.env?.VITE_API_BASE_URL) {
       return import.meta.env.VITE_API_BASE_URL;
     }
-    // Fallback for production (Netlify)
     if (window.location.hostname.includes('netlify')) {
       return 'https://myportfolio-oflk.onrender.com';
     }
-    // Default local development
     return 'http://localhost:5000';
   })();
 
@@ -32,9 +31,7 @@ const AdminPanel = () => {
         }
 
         const response = await axios.get(`${API_BASE}/api/submissions`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           timeout: 10000, // 10 second timeout
         });
 
@@ -46,12 +43,11 @@ const AdminPanel = () => {
           response: err.response?.data,
         });
 
-        // Handle different error cases
         if (err.response?.status === 401 || err.response?.status === 403) {
           setError('Session expired. Please login again.');
           setTimeout(() => {
             localStorage.removeItem('admin_token');
-            window.location.href = '/admin-login';
+            navigate('/admin-login'); // Use navigate to redirect
           }, 2000);
         } else if (err.code === 'ECONNABORTED') {
           setError('Request timeout. Please check your connection.');
@@ -66,11 +62,11 @@ const AdminPanel = () => {
     };
 
     fetchSubmissions();
-  }, [API_BASE]);
+  }, [API_BASE, navigate]); // Add navigate as a dependency
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
-    window.location.href = '/admin-login';
+    navigate('/admin-login');
   };
 
   return (
@@ -112,7 +108,7 @@ const AdminPanel = () => {
         ) : (
           submissions.map((s) => (
             <div
-              key={s.id || `${s.email}-${s.submitted_at}`} // Better key
+              key={s.id || `${s.email}-${s.submitted_at}`}
               className="p-6 rounded-xl bg-gray-100 dark:bg-gray-800 shadow hover:shadow-md transition"
             >
               <div className="flex justify-between items-start">
