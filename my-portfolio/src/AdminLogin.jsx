@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
@@ -6,33 +6,41 @@ const AdminLogin = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  
+  // Check if user is already logged in
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    if (token) {
+      navigate('/admin');
+    }
+  }, [navigate]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-
+    
     // Hardcoded credentials
     const adminUsername = 'admin';
     const adminPassword = 'admin123';
-
+    
     if (username === adminUsername && password === adminPassword) {
       // Save token to localStorage and redirect
       localStorage.setItem('admin_token', 'dummy-token');
       setUsername(''); // Clear the form inputs
       setPassword('');
       setError(''); // Clear any previous errors
-      navigate('/admin'); // Redirect to Admin Panel
+      navigate('/admin', { replace: true }); // Use replace to prevent back navigation
     } else {
       setError('Invalid username or password');
     }
   };
-
+  
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === 'username') setUsername(value);
     if (name === 'password') setPassword(value);
     if (error) setError(''); // Clear the error when the user types
   };
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
       <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md max-w-sm w-full">
@@ -49,7 +57,7 @@ const AdminLogin = () => {
               required
             />
           </div>
-
+          
           <div className="mb-4">
             <label className="block text-gray-700 dark:text-gray-200">Password</label>
             <input
@@ -61,9 +69,9 @@ const AdminLogin = () => {
               required
             />
           </div>
-
+          
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-
+          
           <button
             type="submit"
             className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
