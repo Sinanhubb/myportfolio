@@ -6,50 +6,69 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const API_BASE = 'https://myportfolio-oflk.onrender.com'; // Backend API base URL
-
-  // Fetch submissions from the backend
-  const fetchSubmissions = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const token = localStorage.getItem('admin_token');
-      if (!token) {
-        setError('Session expired. Please log in again.');
-        return;
-      }
-
-      const response = await axios.get(`${API_BASE}/api/submissions`, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Passing token in the header
-        },
-      });
-
-      setSubmissions(response.data); // Set the fetched submissions to state
-    } catch (err) {
-      console.error('Error fetching submissions:', err);
-      setError('Failed to fetch submissions. Please try again later.');
-    } finally {
-      setLoading(false);
+  // ✅ Enhanced environment variable handling with fallbacks
+  const API_BASE = (() => {
+    // Try Vite environment variable first
+    if (import.meta.env?.VITE_API_BASE_URL) {
+      return import.meta.env.VITE_API_BASE_URL;
     }
-  };
+    // Fallback for production (Netlify)
+    if (window.location.hostname.includes('netlify')) {
+      return 'https://myportfolio-oflk.onrender.com';
+    }
+    // Default local development
+    return 'http://localhost:5000';
+  })();
 
-  // Fetch submissions on component mount
   useEffect(() => {
+    const fetchSubmissions = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const token = localStorage.getItem('admin_token');
+        if (!token) {
+          setError('Session expired. Please log in again.');
+          return;
+        }
+
+        const response = await axios.get(`${API_BASE}/api/submissions`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setSubmissions(response.data);
+      } catch (err) {
+        console.error('Error details:', err); // Improved error logging
+        if (err.response) {
+          // Server responded with a status other than 2xx
+          setError(`Server Error: ${err.response.status} - ${err.response.data.message || err.message}`);
+        } else if (err.request) {
+          // No response was received
+          setError('Network Error: No response from server.');
+        } else {
+          // Something else triggered the error
+          setError(`Unexpected Error: ${err.message}`);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchSubmissions();
-  }, []); // Empty array means it will only run once, like componentDidMount
+  }, [API_BASE]);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
-    window.location.href = '/admin-login'; // Redirect to login after logout
+    window.location.href = '/admin-login';
   };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-12 px-4 text-gray-800 dark:text-white">
       <div className="flex justify-between items-center max-w-4xl mx-auto mb-6">
         <h1 className="text-3xl font-bold">
-          📥 Admin Panel – {loading ? '...' : submissions.length}{' '}
+          📥 Admin Panel – {loading ? '...' : submissions.length}
           Submission{submissions.length !== 1 && 's'}
         </h1>
         <button
@@ -67,7 +86,7 @@ const AdminPanel = () => {
             <p className="font-medium">Error:</p>
             <p>{error}</p>
             <button
-              onClick={fetchSubmissions}
+              onClick={() => window.location.reload()}
               className="mt-2 px-3 py-1 bg-red-600 text-white rounded text-sm"
             >
               Retry
