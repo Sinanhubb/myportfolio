@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
-import { isValidToken } from './utils/auth'; // correct the path if needed
 
 const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
