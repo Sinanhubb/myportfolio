@@ -7,12 +7,12 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   
-  // Define your validateToken function (same as in AdminPanel)
+  // Define validateToken to match your AdminPanel component
   const validateToken = (token) =>
     token &&
     typeof token === 'string' &&
-    token.length > 10 && // Modified to match dummy-token length
-    !['undefined', 'null'].includes(token);
+    token.length > 30 &&
+    !['undefined', 'null', 'dummy-token'].includes(token);
   
   // Check if user is already logged in
   useEffect(() => {
@@ -30,16 +30,18 @@ const AdminLogin = () => {
     const adminPassword = 'admin123';
     
     if (username === adminUsername && password === adminPassword) {
-      // Generate a more realistic token
-      const mockToken = `admin-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+      // Generate a token that will pass validation (length > 30)
+      const mockToken = `admin-${Date.now()}-${Math.random().toString(36).substring(2, 15)}-${Math.random().toString(36).substring(2, 15)}`;
+      
+      // Store in localStorage
       localStorage.setItem('admin_token', mockToken);
       
-      setUsername(''); // Clear the form inputs
+      setUsername(''); // Clear form inputs
       setPassword('');
-      setError(''); // Clear any previous errors
+      setError(''); 
       
-      // Use replace to prevent back navigation and force page reload
-      navigate('/admin', { replace: true });
+      // Navigate to admin page with replace to prevent back navigation
+      window.location.href = '/admin'; // Using direct navigation to force full page reload
     } else {
       setError('Invalid username or password');
     }
@@ -49,7 +51,7 @@ const AdminLogin = () => {
     const { name, value } = e.target;
     if (name === 'username') setUsername(value);
     if (name === 'password') setPassword(value);
-    if (error) setError(''); // Clear the error when the user types
+    if (error) setError(''); // Clear error when user types
   };
   
   return (
