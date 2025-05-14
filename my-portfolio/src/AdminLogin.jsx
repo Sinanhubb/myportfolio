@@ -7,11 +7,18 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   
+  // Define your validateToken function (same as in AdminPanel)
+  const validateToken = (token) =>
+    token &&
+    typeof token === 'string' &&
+    token.length > 10 && // Modified to match dummy-token length
+    !['undefined', 'null'].includes(token);
+  
   // Check if user is already logged in
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
-    if (token) {
-      navigate('/admin');
+    if (validateToken(token)) {
+      navigate('/admin', { replace: true });
     }
   }, [navigate]);
 
@@ -23,12 +30,16 @@ const AdminLogin = () => {
     const adminPassword = 'admin123';
     
     if (username === adminUsername && password === adminPassword) {
-      // Save token to localStorage and redirect
-      localStorage.setItem('admin_token', 'dummy-token');
+      // Generate a more realistic token
+      const mockToken = `admin-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
+      localStorage.setItem('admin_token', mockToken);
+      
       setUsername(''); // Clear the form inputs
       setPassword('');
       setError(''); // Clear any previous errors
-      navigate('/admin', { replace: true }); // Use replace to prevent back navigation
+      
+      // Use replace to prevent back navigation and force page reload
+      navigate('/admin', { replace: true });
     } else {
       setError('Invalid username or password');
     }
