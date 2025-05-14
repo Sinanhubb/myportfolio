@@ -21,28 +21,6 @@ const AdminPanel = () => {
     token.length > 30 &&
     !['undefined', 'null', 'dummy-token'].includes(token);
 
-  // Function to handle API errors
-  const handleApiError = useCallback((err) => {
-    console.error('API Error:', err);
-
-    if (err.response?.status === 401 || err.response?.status === 403) {
-      localStorage.removeItem('admin_token');
-      window.location.href = '/admin-login';
-    } else if (err.code === 'ECONNABORTED') {
-      setError('Request timeout. Switching to demo mode with sample data.');
-      setApiMode('mock');
-      loadMockData();
-    } else if (err.message === 'Network Error') {
-      setError('Network connection failed. Switched to demo mode with sample data.');
-      setApiMode('mock');
-      loadMockData();
-    } else if (err.response?.data?.message) {
-      setError(`Server error: ${err.response.data.message}`);
-    } else {
-      setError(err.message || 'Failed to fetch submissions. Please try again.');
-    }
-  }, [loadMockData, setApiMode]);
-
   // Load mock data when API fails
   const loadMockData = useCallback(() => {
     const mockSubmissions = [
@@ -51,27 +29,45 @@ const AdminPanel = () => {
         name: 'John Doe',
         email: 'john.doe@example.com',
         message: 'I really like your portfolio! Would love to discuss a potential project.',
-        submitted_at: new Date(Date.now() - 3600000).toISOString() // 1 hour ago
+        submitted_at: new Date(Date.now() - 3600000).toISOString()
       },
       {
         id: '2',
         name: 'Jane Smith',
         email: 'jane.smith@example.com',
-        message: 'Hi there! Are you available for freelance work next month? We need a developer for our new website.',
-        submitted_at: new Date(Date.now() - 86400000).toISOString() // 1 day ago
+        message: 'Hi there! Are you available for freelance work next month?',
+        submitted_at: new Date(Date.now() - 86400000).toISOString()
       },
       {
         id: '3',
         name: 'Alex Johnson',
         email: 'alex@company.com',
-        message: "Your work looks impressive! I'd like to schedule a call to discuss a potential collaboration.",
-        submitted_at: new Date(Date.now() - 172800000).toISOString() // 2 days ago
+        message: "I'd like to schedule a call to discuss a potential collaboration.",
+        submitted_at: new Date(Date.now() - 172800000).toISOString()
       }
     ];
-    
+
     setSubmissions(mockSubmissions);
     setLoading(false);
   }, []);
+
+  // Handle API errors gracefully
+  const handleApiError = useCallback((err) => {
+    console.error('API Error:', err);
+
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      localStorage.removeItem('admin_token');
+      window.location.href = '/admin-login';
+    } else if (err.code === 'ECONNABORTED' || err.message === 'Network Error') {
+      setError('Network issue occurred. Switched to demo mode.');
+      setApiMode('mock');
+      loadMockData();
+    } else if (err.response?.data?.message) {
+      setError(`Server error: ${err.response.data.message}`);
+    } else {
+      setError(err.message || 'Failed to fetch submissions. Please try again.');
+    }
+  }, [loadMockData]);
 
   const fetchSubmissions = useCallback(async () => {
     try {
@@ -155,12 +151,11 @@ const AdminPanel = () => {
     sub.message.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Toggle between API modes
   const toggleApiMode = useCallback(() => {
     const newMode = apiMode === 'live' ? 'mock' : 'live';
     setApiMode(newMode);
     setError(null);
-    
+
     if (newMode === 'mock') {
       loadMockData();
     } else {
@@ -187,8 +182,8 @@ const AdminPanel = () => {
             <button
               onClick={toggleApiMode}
               className={`px-4 py-2 rounded transition-colors ${
-                apiMode === 'live' 
-                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                apiMode === 'live'
+                  ? 'bg-blue-600 text-white hover:bg-blue-700'
                   : 'bg-yellow-500 text-white hover:bg-yellow-600'
               }`}
             >
