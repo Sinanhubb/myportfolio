@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
 
@@ -8,13 +8,11 @@ const AdminPanel = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Dynamic API base URL
   const API_BASE = import.meta.env.VITE_API_BASE_URL || 
     (window.location.hostname.includes('netlify') 
       ? 'https://myportfolio-oflk.onrender.com' 
       : 'http://localhost:5000');
 
-  // Validate token format
   const validateToken = (token) => {
     return token && 
            typeof token === 'string' && 
@@ -22,15 +20,40 @@ const AdminPanel = () => {
            !['undefined', 'null', 'dummy-token'].includes(token);
   };
 
-  // Fetch submissions with proper error handling
-  const fetchSubmissions = async () => {
+  const handleApiError = (err) => {
+    console.error('API Error:', err);
+
+    if (err.response?.status === 401 || err.response?.status === 403) {
+      localStorage.removeItem('admin_token');
+      window.location.href = '/admin-login';
+      return;
+    }
+
+    if (err.code === 'ECONNABORTED') {
+      setError('Request timeout. Please try again.');
+      return;
+    }
+
+    if (err.message === 'Network Error') {
+      setError('Network connection failed. Check your internet.');
+      return;
+    }
+
+    if (err.response?.data?.message) {
+      setError(`Server error: ${err.response.data.message}`);
+      return;
+    }
+
+    setError(err.message || 'Failed to fetch submissions. Please try again.');
+  };
+
+  const fetchSubmissions = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
 
       const token = localStorage.getItem('admin_token');
-      
-      // Validate token before making request
+
       if (!validateToken(token)) {
         localStorage.removeItem('admin_token');
         window.location.href = '/admin-login';
@@ -60,39 +83,17 @@ const AdminPanel = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [API_BASE]);
 
-  // Centralized error handling
-  const handleApiError = (err) => {
-    console.error('API Error:', err);
-    
-    // Handle unauthorized/forbidden errors
-    if (err.response?.status === 401 || err.response?.status === 403) {
-      localStorage.removeItem('admin_token');
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token');
+    if (!validateToken(token)) {
       window.location.href = '/admin-login';
       return;
     }
-    
-    // Network errors
-    if (err.code === 'ECONNABORTED') {
-      setError('Request timeout. Please try again.');
-      return;
-    }
-    
-    if (err.message === 'Network Error') {
-      setError('Network connection failed. Check your internet.');
-      return;
-    }
-    
-    // Server errors
-    if (err.response?.data?.message) {
-      setError(`Server error: ${err.response.data.message}`);
-      return;
-    }
-    
-    // Default error
-    setError(err.message || 'Failed to fetch submissions. Please try again.');
-  };
+
+    fetchSubmissions();
+  }, [fetchSubmissions]);
 
   const handleLogout = () => {
     localStorage.removeItem('admin_token');
@@ -118,23 +119,11 @@ const AdminPanel = () => {
     document.body.removeChild(link);
   };
 
-  // Filter submissions based on search term
   const filteredSubmissions = submissions.filter(sub => 
     sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     sub.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
     sub.message.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  useEffect(() => {
-    // Check for token on initial load
-    const token = localStorage.getItem('admin_token');
-    if (!validateToken(token)) {
-      window.location.href = '/admin-login';
-      return;
-    }
-    
-    fetchSubmissions();
-  }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-12 px-4 text-gray-800 dark:text-white">
@@ -144,7 +133,7 @@ const AdminPanel = () => {
             📥 Admin Panel – {loading ? '...' : filteredSubmissions.length} 
             Submission{filteredSubmissions.length !== 1 && 's'}
           </h1>
-          
+
           <div className="flex gap-2 w-full sm:w-auto">
             <button
               onClick={fetchSubmissions}
@@ -169,7 +158,6 @@ const AdminPanel = () => {
           </div>
         </div>
 
-        {/* Search Input */}
         <div className="mb-4">
           <input
             type="text"
@@ -180,7 +168,6 @@ const AdminPanel = () => {
           />
         </div>
 
-        {/* Error State */}
         {error && (
           <div className="p-4 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 rounded-lg mb-4">
             <p className="font-medium">Error:</p>
@@ -195,21 +182,18 @@ const AdminPanel = () => {
           </div>
         )}
 
-        {/* Loading State */}
         {loading && (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         )}
 
-        {/* Empty State */}
         {!loading && filteredSubmissions.length === 0 && (
           <p className="text-center text-gray-500 dark:text-gray-400 py-8">
             {searchTerm ? 'No matching submissions found' : 'No submissions yet'}
           </p>
         )}
 
-        {/* Submissions List */}
         {!loading && filteredSubmissions.length > 0 && (
           <div className="grid gap-4">
             {filteredSubmissions.map((submission) => (
