@@ -30,17 +30,28 @@ function MainApp({ skills, projects, testimonials, fadeInUp, staggerContainer })
           variants={fadeInUp}
           className="p-8 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-md rounded-2xl shadow-2xl max-w-2xl w-full text-center"
         >
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-            My <span className="text-indigo-600 dark:text-indigo-400">Portfolio</span>
-          </h1>
-          <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-8">
-            <ReactTyped
-              strings={["I'm a Developer.", "I'm a Designer.", "I'm a Problem Solver."]}
-              typeSpeed={50}
-              backSpeed={30}
-              loop
-            />
-          </p>
+         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+  Hi, I'm <span className="text-indigo-600 dark:text-indigo-400">Sinan</span>
+</h1>
+<p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-4">
+  A passionate <span className="text-indigo-500">Frontend Developer</span> crafting responsive interfaces with <strong>React</strong> and <strong>Tailwind CSS</strong>.
+</p>
+<p className="text-gray-500 dark:text-gray-400 text-md md:text-lg mb-8">
+  Currently open to internships and junior developer roles.
+</p>
+
+         <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-2">
+  <ReactTyped
+    strings={["I'm a Developer.", "I'm a Designer.", "I'm a Problem Solver."]}
+    typeSpeed={50}
+    backSpeed={30}
+    loop
+  />
+</p>
+<p className="text-gray-500 dark:text-gray-400 text-md md:text-lg mb-8">
+  Currently open to internships and junior developer roles.
+</p>
+
 
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <motion.a
