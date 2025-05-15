@@ -1,60 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const navigate = useNavigate();
   
-  // Define validateToken to match your AdminPanel component
-  const validateToken = (token) =>
-    token &&
-    typeof token === 'string' &&
-    token.length > 30 &&
-    !['undefined', 'null', 'dummy-token'].includes(token);
-  
-  // Check if user is already logged in
-  useEffect(() => {
-    const token = localStorage.getItem('admin_token');
-    if (validateToken(token)) {
-      navigate('/admin', { replace: true });
-    }
-  }, [navigate]);
-  
-  const handleLogin = (e) => {
+  // Directly handle login without checking if already logged in
+  const handleLogin = async (e) => {
     e.preventDefault();
-    // Hardcoded credentials
-    const adminUsername = 'admin';
-    const adminPassword = 'admin123';
+    setIsLoggingIn(true);
     
-    if (username === adminUsername && password === adminPassword) {
-      // Generate a token that will pass validation (length > 30)
-      const mockToken = `admin-${Date.now()}-${Math.random().toString(36).substring(2, 15)}-${Math.random().toString(36).substring(2, 15)}`;
+    try {
+      // Hardcoded credentials (move to environment variables in production)
+      const adminUsername = 'admin';
+      const adminPassword = 'admin123';
       
-      // Store in localStorage
-      localStorage.setItem('admin_token', mockToken);
-      
-      // Clear form inputs and errors
-      setUsername('');
-      setPassword('');
-      setError('');
-      
-      // Use timeout to ensure token is saved before navigation
-      setTimeout(() => {
-        // Navigate to admin page with replace to prevent back navigation
-        navigate('/admin', { replace: true });
-      }, 100);
-    } else {
-      setError('Invalid username or password');
+      if (username === adminUsername && password === adminPassword) {
+        // Generate a strong token
+        const timestamp = Date.now();
+        const randomStr = Math.random().toString(36).substring(2, 15);
+        const mockToken = `admin-${timestamp}-${randomStr}`;
+        
+        // IMPORTANT: Set token in localStorage
+        console.log("Setting token:", mockToken);
+        localStorage.setItem('admin_token', mockToken);
+        
+        // Clear form and errors
+        setUsername('');
+        setPassword('');
+        setError('');
+        
+        // Add delay to ensure token is stored before navigation
+        setTimeout(() => {
+          console.log("Navigating after token set");
+          console.log("Current token:", localStorage.getItem('admin_token'));
+          navigate('/admin');
+          window.location.reload(); // Force a full page reload to ensure new state
+        }, 300);
+      } else {
+        setError('Invalid username or password');
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+      setError('Login failed. Please try again.');
+    } finally {
+      setIsLoggingIn(false);
     }
-  };
-  
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'username') setUsername(value);
-    if (name === 'password') setPassword(value);
-    if (error) setError(''); // Clear error when user types
   };
   
   return (
@@ -69,7 +63,7 @@ const AdminLogin = () => {
               name="username"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={username}
-              onChange={handleInputChange}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
@@ -80,7 +74,7 @@ const AdminLogin = () => {
               name="password"
               className="w-full p-2 mt-2 border border-gray-300 dark:border-gray-600 rounded-md"
               value={password}
-              onChange={handleInputChange}
+              onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
@@ -88,8 +82,9 @@ const AdminLogin = () => {
           <button
             type="submit"
             className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+            disabled={isLoggingIn}
           >
-            Login
+            {isLoggingIn ? 'Logging in...' : 'Login'}
           </button>
         </form>
       </div>

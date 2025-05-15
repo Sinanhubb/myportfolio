@@ -1,32 +1,46 @@
-import React from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Navigate, useLocation, Outlet } from 'react-router-dom';
 
-export const PrivateRoute = () => {
+// Simple PrivateRoute component
+const PrivateRoute = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
-  
-  // Get token from localStorage
-  const token = localStorage.getItem('admin_token');
-  
-  // Debugger - Remove in production
-  console.log("Current token:", token);
-  
-  // Token validation
-  const isValidToken = 
-    token &&
-    typeof token === 'string' &&
-    token.length > 30 &&
-    !['undefined', 'null', 'dummy-token'].includes(token);
-  
-  // Debugger - Remove in production
-  console.log("Is token valid:", isValidToken);
-  
-  // If token is valid, render the child routes (Outlet)
-  // If not, redirect to login page
-  return isValidToken ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/admin-login" state={{ from: location }} replace />
-  );
+
+  useEffect(() => {
+    // Check authentication status
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem('admin_token');
+        console.log("Token in PrivateRoute:", token);
+        
+        // Simple token validation
+        const isValid = token && typeof token === 'string' && token.length > 20;
+        console.log("Is token valid:", isValid);
+        
+        setIsAuthenticated(isValid);
+      } catch (error) {
+        console.error("Auth check error:", error);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [location.pathname]);
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  // Return outlet (child components) if authenticated, otherwise redirect to login
+  return isAuthenticated ? <Outlet /> : <Navigate to="/admin-login" />;
 };
 
 export default PrivateRoute;
