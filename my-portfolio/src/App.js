@@ -9,7 +9,7 @@ import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
 import { PrivateRoute } from "./PrivateRoute";
-import ScrollToTopButton from './components/ScrollToTopButton';
+import ScrollToTopButton from './ScrollToTopButton';
 
 
 
