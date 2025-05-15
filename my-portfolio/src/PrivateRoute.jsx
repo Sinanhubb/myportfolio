@@ -1,8 +1,4 @@
-// src/PrivateRoute.jsx
-import React from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { isValidToken } from './utils/auth';
-
+// ✅ src/PrivateRoute.jsx
 const PrivateRoute = () => {
   const location = useLocation();
   const token = localStorage.getItem('admin_token');
