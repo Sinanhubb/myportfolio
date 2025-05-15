@@ -9,6 +9,7 @@ import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
 import { PrivateRoute } from "./PrivateRoute";
+import ProjectDetail from "./ProjectDetail";
 
 
 
@@ -215,23 +216,36 @@ function App() {
         </React.Suspense>
 
         <Routes>
-          <Route
-            path="/"
-            element={
-              <MainApp
-                skills={skills}
-                projects={projects}
-                testimonials={testimonials}
-                fadeInUp={fadeInUp}
-                staggerContainer={staggerContainer}
-              />
-            }
-          />
-          <Route path="/admin-login" element={<AdminLogin />} />
-          <Route element={<PrivateRoute />}>
-            <Route path="/admin" element={<AdminPanel />} />
-          </Route>
-        </Routes>
+  {/* Route to project detail page */}
+  <Route
+    path="/project/:id"
+    element={
+      <ProjectDetail projects={projects} />
+    }
+  />
+
+  {/* Admin login page */}
+  <Route path="/admin-login" element={<AdminLogin />} />
+
+  {/* Admin panel (protected) */}
+  <Route element={<PrivateRoute />}>
+    <Route path="/admin" element={<AdminPanel />} />
+  </Route>
+
+  {/* Home and all other routes show MainApp */}
+  <Route
+    path="/"
+    element={
+      <MainApp
+        skills={skills}
+        projects={projects}
+        testimonials={testimonials}
+        fadeInUp={fadeInUp}
+        staggerContainer={staggerContainer}
+      />
+    }
+  />
+</Routes>
 
         <Footer />
       </div>

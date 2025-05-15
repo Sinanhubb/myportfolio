@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -44,7 +45,7 @@ const Projects = ({ projects = [] }) => {
           {projects.map((project, index) => (
             <motion.div
               key={project.id || index}
-              className="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300"
+              className="bg-gray-50 dark:bg-gray-800 rounded-lg overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 flex flex-col h-full"
               variants={fadeInUp}
             >
               <img
@@ -53,23 +54,31 @@ const Projects = ({ projects = [] }) => {
                 className="w-full h-48 object-cover"
                 loading="lazy"
               />
-              <div className="p-6">
-                <h3 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
-                  {project.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {(project.tags || []).map((tag, i) => (
-                    <span
-                      key={i}
-                      className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-sm rounded-full"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
+              <div className="p-6 flex flex-col justify-between h-full">
+                <div>
+                  <h3 className="text-2xl font-semibold text-gray-800 dark:text-white mb-2">
+                    {project.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    {project.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {(project.tags || []).map((tag, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 text-sm rounded-full"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
+                <Link
+                  to={`/project/${project.id}`}
+                  className="mt-4 inline-block text-indigo-600 dark:text-indigo-400 hover:underline font-medium"
+                >
+                  View Details →
+                </Link>
               </div>
             </motion.div>
           ))}
