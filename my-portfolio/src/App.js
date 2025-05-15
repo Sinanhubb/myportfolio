@@ -9,6 +9,11 @@ import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
 import { PrivateRoute } from "./PrivateRoute";
+import ScrollToTopButton from './components/ScrollToTopButton';
+
+
+
+
 
 // Lazy load Navbar
 const Navbar = React.lazy(() => import("./Navbar"));
@@ -203,7 +208,8 @@ function App() {
             </svg>
           )}
         </button>
-
+           <ScrollToTopButton />
+<Footer />
         {/* Navbar */}
         <React.Suspense fallback={<div className="h-16 bg-gray-900"></div>}>
           <Navbar />
