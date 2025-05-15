@@ -9,7 +9,7 @@ import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
 import { PrivateRoute } from "./PrivateRoute";
-import ScrollToTopButton from './ScrollToTopButton';
+
 
 
 
@@ -208,8 +208,7 @@ function App() {
             </svg>
           )}
         </button>
-           <ScrollToTopButton />
-<Footer />
+           
         {/* Navbar */}
         <React.Suspense fallback={<div className="h-16 bg-gray-900"></div>}>
           <Navbar />
