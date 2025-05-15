@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-//import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { motion } from "framer-motion";
 import About from "./About";
 import Projects from "./Projects";
@@ -8,7 +8,7 @@ import Contact from "./Contact";
 import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
-import { PrivateRoute } from './PrivateRoute';
+import { PrivateRoute } from "./PrivateRoute";
 
 // Lazy load Navbar
 const Navbar = React.lazy(() => import("./Navbar"));
@@ -16,7 +16,7 @@ const Navbar = React.lazy(() => import("./Navbar"));
 function MainApp({ skills, projects, testimonials, fadeInUp, staggerContainer }) {
   return (
     <>
-      {/* Hero */}
+      {/* Hero Section */}
       <section id="home" className="flex items-center justify-center min-h-screen px-4 pt-16">
         <motion.div
           initial="hidden"
@@ -70,12 +70,13 @@ function MainApp({ skills, projects, testimonials, fadeInUp, staggerContainer })
           <motion.div
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
+            viewport={{ once: true }}
             variants={fadeInUp}
             className="mb-12 text-center"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-800 dark:text-white">What Clients Say</h2>
           </motion.div>
+
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -87,12 +88,12 @@ function MainApp({ skills, projects, testimonials, fadeInUp, staggerContainer })
               <motion.div
                 key={testimonial.id}
                 variants={fadeInUp}
-                className="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg relative"
+                className="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg"
               >
                 <p className="text-gray-600 dark:text-gray-300 mb-6 italic">{testimonial.text}</p>
                 <div className="flex items-center">
                   <div className="w-12 h-12 bg-gray-300 dark:bg-gray-600 rounded-full mr-4 flex items-center justify-center font-bold text-gray-600 dark:text-gray-300">
-                    {testimonial.author.split(" ").map(n => n[0]).join("")}
+                    {testimonial.author.split(" ").map((n) => n[0]).join("")}
                   </div>
                   <div>
                     <h4 className="font-bold text-gray-800 dark:text-white">{testimonial.author}</h4>
@@ -127,7 +128,7 @@ function App() {
       transition: { staggerChildren: 0.2 },
     },
   };
-  
+
   const skills = [
     { name: "JavaScript", level: 90 },
     { name: "React", level: 85 },
@@ -155,14 +156,14 @@ function App() {
     {
       id: 3,
       title: "Task Management App",
-      description: "A productivity application for managing tasks and projects with team collaboration features.",
+      description: "A productivity app with team collaboration features.",
       image: "/api/placeholder/150/200",
       tags: ["React Native", "Firebase", "Redux"],
     },
     {
       id: 4,
       title: "Weather Forecast App",
-      description: "Real-time weather forecasting with interactive maps and location-based services.",
+      description: "Real-time weather forecasting using geolocation and interactive maps.",
       image: "/api/placeholder/150/200",
       tags: ["JavaScript", "API Integration", "Geolocation"],
     },
@@ -185,7 +186,7 @@ function App() {
 
   return (
     <Router>
-      <div className="min-h-screen bg-gradient-to-b from-white to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-800 dark:text-white flex flex-col transition-colors duration-300">
+      <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-800 dark:text-white flex flex-col transition-colors duration-300">
         {/* Dark mode toggle */}
         <button
           aria-label="Toggle dark mode"
@@ -209,28 +210,24 @@ function App() {
         </React.Suspense>
 
         <Routes>
-        <Route 
-          path="/" 
-          element={
-            <MainApp 
-              skills={skills} 
-              projects={projects} 
-              testimonials={testimonials}
-              fadeInUp={fadeInUp}
-              staggerContainer={staggerContainer}
-            />
-          } 
-        />
-        <Route path="/admin-login" element={<AdminLogin />} />
-        
-        {/* ✅ Secure admin route */}
-        <Route element={<PrivateRoute />}>
-          <Route path="/admin" element={<AdminPanel />} />
-        </Route>
-      </Routes>
+          <Route
+            path="/"
+            element={
+              <MainApp
+                skills={skills}
+                projects={projects}
+                testimonials={testimonials}
+                fadeInUp={fadeInUp}
+                staggerContainer={staggerContainer}
+              />
+            }
+          />
+          <Route path="/admin-login" element={<AdminLogin />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/admin" element={<AdminPanel />} />
+          </Route>
+        </Routes>
 
-
-        {/* Footer */}
         <Footer />
       </div>
     </Router>

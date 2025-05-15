@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const AdminLogin = () => {
   const [username, setUsername] = useState('');
@@ -7,38 +8,44 @@ const AdminLogin = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const validateToken = (token) =>
-    token &&
-    typeof token === 'string' &&
-    token.length > 30 &&
-    !['undefined', 'null', 'dummy-token'].includes(token);
+  // Check for valid token (shorter than mock token)
+  const isValidToken = (token) =>
+    token && typeof token === 'string' && token.length > 10;
 
+  // Auto-redirect if already logged in
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
-    if (validateToken(token)) {
+    if (isValidToken(token)) {
       navigate('/admin', { replace: true });
     }
   }, [navigate]);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const adminUsername = 'admin';
-    const adminPassword = 'admin123';
+    try {
+      const response = await axios.post(
+        'https://myportfolio-oflk.onrender.com/api/admin/login',
+        {
+          username,
+          password,
+        }
+      );
 
-    if (username === adminUsername && password === adminPassword) {
-      // Create a dummy token with length > 30
-      const mockToken = `admin-${Date.now()}-${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+      const { token } = response.data;
 
-      localStorage.setItem('admin_token', mockToken);
-
-      setUsername('');
-      setPassword('');
-      setError('');
-
-      navigate('/admin', { replace: true });
-    } else {
-      setError('Invalid username or password');
+      if (token) {
+        localStorage.setItem('admin_token', token);
+        setUsername('');
+        setPassword('');
+        setError('');
+        navigate('/admin', { replace: true });
+      } else {
+        setError('Invalid server response');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('Login failed. Check username/password');
     }
   };
 
