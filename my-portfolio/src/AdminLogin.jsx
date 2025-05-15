@@ -21,10 +21,9 @@ const AdminLogin = () => {
       navigate('/admin', { replace: true });
     }
   }, [navigate]);
-
+  
   const handleLogin = (e) => {
     e.preventDefault();
-    
     // Hardcoded credentials
     const adminUsername = 'admin';
     const adminPassword = 'admin123';
@@ -36,13 +35,16 @@ const AdminLogin = () => {
       // Store in localStorage
       localStorage.setItem('admin_token', mockToken);
       
-      setUsername(''); // Clear form inputs
+      // Clear form inputs and errors
+      setUsername('');
       setPassword('');
-      setError(''); 
+      setError('');
       
-      // Navigate to admin page with replace to prevent back navigation
-      navigate('/admin', { replace: true });
- // Using direct navigation to force full page reload
+      // Use timeout to ensure token is saved before navigation
+      setTimeout(() => {
+        // Navigate to admin page with replace to prevent back navigation
+        navigate('/admin', { replace: true });
+      }, 100);
     } else {
       setError('Invalid username or password');
     }
@@ -71,7 +73,6 @@ const AdminLogin = () => {
               required
             />
           </div>
-          
           <div className="mb-4">
             <label className="block text-gray-700 dark:text-gray-200">Password</label>
             <input
@@ -83,9 +84,7 @@ const AdminLogin = () => {
               required
             />
           </div>
-          
           {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-          
           <button
             type="submit"
             className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
