@@ -1,27 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import { format } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
+import { isValidToken } from './utils/auth';
 
 const AdminPanel = () => {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [apiMode, setApiMode] = useState('live'); // 'live' or 'mock'
-  
-  const API_BASE =
-    import.meta.env?.VITE_API_BASE_URL ||
+  const [apiMode, setApiMode] = useState('live');
+  const navigate = useNavigate();
+
+  const API_BASE = import.meta.env?.VITE_API_BASE_URL || 
     (window?.location?.hostname?.includes('netlify')
-      ? 'https://myportfolio-oflk.onrender.com'
+      ? 'https://myportfolio-offk.onrender.com'
       : 'http://localhost:5000');
-  
-  // Simplified token validation - focus on consistency
-  const validateToken = (token) => {
-    return token && typeof token === 'string' && token.length > 20;
-  };
-  
-  // Load mock data when API fails
-  const loadMockData = () => {
+
+  const loadMockData = useCallback(() => {
     const mockSubmissions = [
       {
         id: '1',
@@ -36,26 +32,17 @@ const AdminPanel = () => {
         email: 'jane.smith@example.com',
         message: 'Hi there! Are you available for freelance work next month?',
         submitted_at: new Date(Date.now() - 86400000).toISOString()
-      },
-      {
-        id: '3',
-        name: 'Alex Johnson',
-        email: 'alex@company.com',
-        message: "I'd like to schedule a call to discuss a potential collaboration.",
-        submitted_at: new Date(Date.now() - 172800000).toISOString()
       }
     ];
-    
     setSubmissions(mockSubmissions);
     setLoading(false);
-  };
-  
-  // Handle API errors gracefully
-  const handleApiError = (err) => {
+  }, []);
+
+  const handleApiError = useCallback((err) => {
     console.error('API Error:', err);
-    
     if (err.response?.status === 401 || err.response?.status === 403) {
-      logout();
+      localStorage.removeItem('admin_token');
+      navigate('/admin-login', { replace: true });
     } else if (err.code === 'ECONNABORTED' || err.message === 'Network Error') {
       setError('Network issue occurred. Switched to demo mode.');
       setApiMode('mock');
@@ -65,35 +52,25 @@ const AdminPanel = () => {
     } else {
       setError(err.message || 'Failed to fetch submissions. Please try again.');
     }
-  };
-  
-  // Standard logout function
-  const logout = () => {
-    console.log("Logging out...");
-    localStorage.removeItem('admin_token');
-    window.location.href = '/admin-login';
-  };
-  
-  // Fetch submissions from API
-  const fetchSubmissions = async () => {
+  }, [loadMockData, navigate]);
+
+  const fetchSubmissions = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
       
       const token = localStorage.getItem('admin_token');
-      console.log("Token in AdminPanel:", token);
-      
-      if (!validateToken(token)) {
-        console.log("Invalid token - logout");
-        logout();
+      if (!isValidToken(token)) {
+        localStorage.removeItem('admin_token');
+        navigate('/admin-login', { replace: true });
         return;
       }
-      
+
       if (apiMode === 'mock') {
         loadMockData();
         return;
       }
-      
+
       const response = await axios.get(`${API_BASE}/api/submissions`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -101,7 +78,7 @@ const AdminPanel = () => {
         },
         timeout: 10000,
       });
-      
+
       if (Array.isArray(response.data)) {
         const formatted = response.data.map((sub) => ({
           ...sub,
@@ -117,53 +94,32 @@ const AdminPanel = () => {
     } finally {
       setLoading(false);
     }
-  };
-  
-  // Load data on component mount
+  }, [API_BASE, apiMode, handleApiError, loadMockData, navigate]);
+
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
-    console.log("Initial token check in AdminPanel:", token);
-    
-    if (!validateToken(token)) {
-      console.log("Invalid token in initial check - redirecting");
-      logout();
+    if (!isValidToken(token)) {
+      localStorage.removeItem('admin_token');
+      navigate('/admin-login', { replace: true });
       return;
     }
-    
     fetchSubmissions();
-  }, []);
-  
-  // Toggle between live and mock API modes
-  const toggleApiMode = () => {
-    const newMode = apiMode === 'live' ? 'mock' : 'live';
-    setApiMode(newMode);
-    setError(null);
-    
-    if (newMode === 'mock') {
-      loadMockData();
-    } else {
-      fetchSubmissions();
-    }
+  }, [fetchSubmissions, navigate]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token');
+    navigate('/admin-login', { replace: true });
   };
-  
-  // Filter submissions based on search term
-  const filteredSubmissions = submissions.filter((sub) =>
-    sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sub.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    sub.message.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  
-  // Export to CSV functionality
+
   const exportToCSV = () => {
     const headers = ['Name', 'Email', 'Message', 'Date'];
     const csvContent = [
       headers.join(','),
       ...filteredSubmissions.map((sub) =>
-        `"${sub.name.replace(/"/g, '""')}","${sub.email}","${sub.message.replace(/"/g,
-        '""')}","${format(new Date(sub.submitted_at), 'PPpp')}"`
+        `"${sub.name.replace(/"/g, '""')}","${sub.email}","${sub.message.replace(/"/g, '""')}","${format(new Date(sub.submitted_at), 'PPpp')}"`
       ),
-    ].join('\n');
-    
+    ].join("\n");
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -173,7 +129,24 @@ const AdminPanel = () => {
     link.click();
     document.body.removeChild(link);
   };
-  
+
+  const filteredSubmissions = submissions.filter((sub) =>
+    sub.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sub.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    sub.message.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const toggleApiMode = useCallback(() => {
+    const newMode = apiMode === 'live' ? 'mock' : 'live';
+    setApiMode(newMode);
+    setError(null);
+    if (newMode === 'mock') {
+      loadMockData();
+    } else {
+      fetchSubmissions();
+    }
+  }, [apiMode, loadMockData, fetchSubmissions]);
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 py-12 px-4 text-gray-800 dark:text-white">
       <div className="max-w-4xl mx-auto">
@@ -188,7 +161,7 @@ const AdminPanel = () => {
               className="px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               disabled={loading}
             >
-              {loading ? 'Refreshing...' : '⟳ Refresh'}
+              {loading ? 'Refreshing...' : 'Refresh'}
             </button>
             <button
               onClick={toggleApiMode}
@@ -198,25 +171,24 @@ const AdminPanel = () => {
                   : 'bg-yellow-500 text-white hover:bg-yellow-600'
               }`}
             >
-              {apiMode === 'live' ? ' Live Data' : ' Demo Data'}
+              {apiMode === 'live' ? 'Live Data' : 'Demo Data'}
             </button>
             <button
               onClick={exportToCSV}
               className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
               disabled={loading || filteredSubmissions.length === 0}
             >
-              ↓ Export CSV
+              Export CSV
             </button>
             <button
-              onClick={logout}
+              onClick={handleLogout}
               className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
             >
               Logout
             </button>
           </div>
         </div>
-        
-        {/* Search box */}
+
         <div className="mb-4">
           <input
             type="text"
@@ -226,8 +198,7 @@ const AdminPanel = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        
-        {/* Error message */}
+
         {error && (
           <div className="p-4 bg-yellow-100 dark:bg-yellow-900 border-l-4 border-yellow-500 text-yellow-800 dark:text-yellow-200 rounded-lg mb-4">
             <p className="font-medium">Notice:</p>
@@ -239,22 +210,19 @@ const AdminPanel = () => {
             )}
           </div>
         )}
-        
-        {/* Loading state */}
+
         {loading && (
           <div className="flex justify-center items-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
         )}
-        
-        {/* No submissions state */}
+
         {!loading && filteredSubmissions.length === 0 && (
           <p className="text-center text-gray-500 dark:text-gray-400 py-8">
             {searchTerm ? 'No matching submissions found' : 'No submissions yet'}
           </p>
         )}
-        
-        {/* Submissions list */}
+
         {!loading && filteredSubmissions.length > 0 && (
           <div className="grid gap-4">
             {filteredSubmissions.map((submission) => (
