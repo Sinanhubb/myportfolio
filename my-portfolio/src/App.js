@@ -8,7 +8,7 @@ import Contact from "./Contact";
 import { ReactTyped } from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
-import { PrivateRoute } from './PrivateRoute';
+import PrivateRoute from './PrivateRoute';
 
 // Lazy load Navbar
 const Navbar = React.lazy(() => import("./Navbar"));
