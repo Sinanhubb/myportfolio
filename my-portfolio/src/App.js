@@ -36,9 +36,6 @@ function MainApp({ skills, projects, testimonials, fadeInUp, staggerContainer })
 <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-4">
   A passionate <span className="text-indigo-500">Frontend Developer</span> crafting responsive interfaces with <strong>React</strong> and <strong>Tailwind CSS</strong>.
 </p>
-<p className="text-gray-500 dark:text-gray-400 text-md md:text-lg mb-8">
-  Currently open to internships and junior developer roles.
-</p>
 
          <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-2">
   <ReactTyped
