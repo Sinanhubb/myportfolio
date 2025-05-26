@@ -1,59 +1,156 @@
-import React from "react";
-import { useParams, useNavigate } from "react-router-dom";
+// ProjectDetail.js
+import React, { useEffect, useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const ProjectDetail = ({ projects }) => {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const projectId = parseInt(id, 10);
-  const project = projects.find((p) => p.id === projectId);
+  const [project, setProject] = useState(null);
+
+  useEffect(() => {
+    const projectId = parseInt(id); // Or use id directly if you're using slugs
+    const foundProject = projects.find(p => p.id === projectId);
+    setProject(foundProject);
+  }, [id, projects]);
+
+  const fadeIn = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5, delay: 0.1 } },
+  };
 
   if (!project) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-white dark:bg-gray-900 text-gray-900 dark:text-white px-4">
-        <h2 className="text-3xl font-bold mb-4">Project Not Found</h2>
-        <button
-          className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded transition"
-          onClick={() => navigate("/")}
-        >
-          Go Back Home
-        </button>
+      <div className="min-h-screen flex items-center justify-center text-center px-4">
+        <p className="text-gray-600 dark:text-gray-300 text-lg">
+          ❌ Project not found.<br />
+          Please check the URL or go back to the{" "}
+          <Link to="/" className="text-indigo-600 hover:underline">Projects page</Link>.
+        </p>
       </div>
     );
   }
 
   return (
-    <section className="max-w-4xl mx-auto p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg my-12">
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-6 text-indigo-600 hover:text-indigo-800 font-semibold"
-      >
-        &larr; Back to Projects
-      </button>
+    <div className="pt-20 pb-16 px-4 min-h-screen">
+      <div className="max-w-4xl mx-auto">
+        <Link 
+          to="/" 
+          className="inline-flex items-center text-indigo-600 hover:text-indigo-800 mb-8 transition-colors"
+        >
+          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Projects
+        </Link>
 
-      <h1 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">{project.title}</h1>
+        <motion.div 
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden"
+          initial="hidden"
+          animate="visible"
+          variants={fadeIn}
+        >
+          {/* Project Image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="h-64 bg-gray-200 dark:bg-gray-700 relative"
+          >
+            <img 
+              src={project.image || "/api/placeholder/800/400"} 
+              alt={project.title}
+              className="w-full h-full object-cover" 
+            />
+          </motion.div>
 
-      <img
-        src={project.image}
-        alt={project.title}
-        className="w-full h-auto rounded-lg mb-6 object-cover"
-      />
+          {/* Project Content */}
+          <div className="p-8">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+              {project.title}
+            </h1>
 
-      <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">{project.description}</p>
-
-      <div>
-        <h3 className="text-xl font-semibold mb-3">Technologies Used:</h3>
-        <div className="flex flex-wrap gap-3">
-          {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="inline-block bg-indigo-200 dark:bg-indigo-700 text-indigo-800 dark:text-indigo-200 px-3 py-1 rounded-full font-medium"
+            {/* Tags */}
+            <motion.div
+              className="flex flex-wrap gap-2 mb-6"
+              initial="hidden"
+              animate="visible"
+              variants={{
+                hidden: { opacity: 0 },
+                visible: {
+                  opacity: 1,
+                  transition: { staggerChildren: 0.05 },
+                },
+              }}
             >
-              {tag}
-            </span>
-          ))}
-        </div>
+              {project.tags.map((tag, index) => (
+                <motion.span
+                  key={index}
+                  variants={{
+                    hidden: { opacity: 0, y: 10 },
+                    visible: { opacity: 1, y: 0 },
+                  }}
+                  className="px-3 py-1 bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 rounded-full text-sm"
+                >
+                  {tag}
+                </motion.span>
+              ))}
+            </motion.div>
+
+            {/* Description */}
+            <div className="prose dark:prose-invert max-w-none">
+              <p className="text-lg text-gray-700 dark:text-gray-300 mb-6">
+                {project.description}
+              </p>
+
+              {/* Project Details */}
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Project Details</h2>
+                <p className="text-gray-600 dark:text-gray-300">
+                  This is where you would add more detailed information about the project,
+                  including challenges faced, solutions implemented, and outcomes achieved.
+                  You can also talk about the technology stack in more detail.
+                </p>
+              </div>
+
+              {/* Features */}
+              <div className="mt-8">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">Key Features</h2>
+                <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300">
+                  <li className="mb-2">Feature one description</li>
+                  <li className="mb-2">Feature two description</li>
+                  <li className="mb-2">Feature three description</li>
+                  <li className="mb-2">Feature four description</li>
+                </ul>
+              </div>
+
+              {/* Links */}
+              <div className="mt-12 flex flex-wrap gap-4">
+                {project.liveDemoUrl && (
+                  <a 
+                    href={project.liveDemoUrl} 
+                    className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    Live Demo
+                  </a>
+                )}
+                {project.codeUrl && (
+                  <a 
+                    href={project.codeUrl} 
+                    className="px-6 py-3 border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                  >
+                    View Code
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </motion.div>
       </div>
-    </section>
+    </div>
   );
 };
 
