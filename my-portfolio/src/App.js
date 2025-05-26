@@ -157,7 +157,7 @@ function App() {
       id: 1,
       title: "T-Shirt Design Studio",
       description: "A 3D customizable T-shirt design app where users can upload images, add text, and preview changes in real time. Built for a seamless design experience using cutting-edge web technologies.",
-      image: "C:\myportfolio\my-portfolio\public\Screenshot 2025-05-26 200025.png",
+      image: "/Screenshot 2025-05-26 200025.png",
       tags: ["Lit,", "Vite", "TypeScript","Tailwind CSS"]
     },
     {
