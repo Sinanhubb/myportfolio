@@ -5,16 +5,11 @@ import About from "./About";
 import Projects from "./Projects";
 import Footer from "./Footer";
 import Contact from "./Contact";
-import { ReactTyped } from "react-typed";
+import ReactTyped from "react-typed";
 import AdminPanel from "./AdminPanel";
 import AdminLogin from "./AdminLogin";
 import { PrivateRoute } from "./PrivateRoute";
 import ProjectDetail from "./ProjectDetail";
-
-
-
-
-
 
 // Lazy load Navbar
 const Navbar = React.lazy(() => import("./Navbar"));
@@ -30,25 +25,24 @@ function MainApp({ skills, projects, testimonials, fadeInUp, staggerContainer })
           variants={fadeInUp}
           className="p-8 bg-white dark:bg-gray-800 bg-opacity-90 backdrop-blur-md rounded-2xl shadow-2xl max-w-2xl w-full text-center"
         >
-         <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
-  Hi, I'm <span className="text-indigo-600 dark:text-indigo-400">Sinan</span>
-</h1>
-<p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-4">
-  A passionate <span className="text-indigo-500">Frontend Developer</span> crafting responsive interfaces with <strong>React</strong> and <strong>Tailwind CSS</strong>.
-</p>
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+            Hi, I'm <span className="text-indigo-600 dark:text-indigo-400">Sinan</span>
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-4">
+            A passionate <span className="text-indigo-500">Frontend Developer</span> crafting responsive interfaces with <strong>React</strong> and <strong>Tailwind CSS</strong>.
+          </p>
 
-         <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-2">
-  <ReactTyped
-    strings={["I'm a Developer.", "I'm a Designer.", "I'm a Problem Solver."]}
-    typeSpeed={50}
-    backSpeed={30}
-    loop
-  />
-</p>
-<p className="text-gray-500 dark:text-gray-400 text-md md:text-lg mb-8">
-  Currently open to internships and junior developer roles.
-</p>
-
+          <p className="text-gray-600 dark:text-gray-300 text-lg md:text-xl mb-2">
+            <ReactTyped
+              strings={["I'm a Developer.", "I'm a Designer.", "I'm a Problem Solver."]}
+              typeSpeed={50}
+              backSpeed={30}
+              loop
+            />
+          </p>
+          <p className="text-gray-500 dark:text-gray-400 text-md md:text-lg mb-8">
+            Currently open to internships and junior developer roles.
+          </p>
 
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <motion.a
@@ -158,7 +152,7 @@ function App() {
       title: "T-Shirt Design Studio",
       description: "A 3D customizable T-shirt design app where users can upload images, add text, and preview changes in real time. Built for a seamless design experience using cutting-edge web technologies.",
       image: "/api/placeholder/150/200",
-      tags: ["Lit,", "Vite", "TypeScript","Tailwind CSS"]
+      tags: ["Lit", "Vite", "TypeScript", "Tailwind CSS"],
     },
     {
       id: 2,
@@ -169,17 +163,17 @@ function App() {
     },
     {
       id: 3,
-      title: "Task Management App",
-      description: "A productivity app with team collaboration features.",
+      title: "On-Demand Service Provider App",
+      description: "This project aims to develop a full-stack web and mobile application that connects users with nearby technicians for various household and commercial services (e.g., plumbing, electrical work, appliance repair). The platform enables users to easily book services, track technicians in real time, and securely manage transactions",
       image: "/api/placeholder/150/200",
-      tags: ["React Native", "Firebase", "Redux"],
+      tags: ["React", "Python", "MySQL", "Postgres", "Tailwind CSS"],
     },
     {
       id: 4,
-      title: "Weather Forecast App",
-      description: "Real-time weather forecasting using geolocation and interactive maps.",
+      title: "Indoor Navigation Using AR",
+      description: "Created an Augmented Reality-based indoor navigation app that helps users navigate complex indoor environments such as malls, campuses, and hospitals using their smartphones. The application employs AR overlays to provide real-time visual guidance to users as they find their way to their destination.",
       image: "/api/placeholder/150/200",
-      tags: ["JavaScript", "API Integration", "Geolocation"],
+      tags: ["Unity3D", "ARCore", "Python", "C#"],
     },
   ];
 
@@ -209,51 +203,44 @@ function App() {
         >
           {darkMode ? (
             <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.71-.71M6.34 6.34l-.71-.71m12.72 0l-.71.71M6.34 17.66l-.71.71M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.36 6.36l-.71-.71M6.34 6.34l-.71-.71m12.72 0l-.71.71M6.34 17.66l-.71.71M12 8a4 4 0 000 8 4 4 0 000-8z" />
             </svg>
           ) : (
             <svg className="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
             </svg>
           )}
         </button>
-           
-        {/* Navbar */}
-        <React.Suspense fallback={<div className="h-16 bg-gray-900"></div>}>
-          <Navbar />
+
+        <React.Suspense fallback={<div className="text-center p-8">Loading navigation...</div>}>
+          <Navbar darkMode={darkMode} />
         </React.Suspense>
 
         <Routes>
-  {/* Route to project detail page */}
-  <Route
-    path="/project/:id"
-    element={
-      <ProjectDetail projects={projects} />
-    }
-  />
-
-  {/* Admin login page */}
-  <Route path="/admin-login" element={<AdminLogin />} />
-
-  {/* Admin panel (protected) */}
-  <Route element={<PrivateRoute />}>
-    <Route path="/admin" element={<AdminPanel />} />
-  </Route>
-
-  {/* Home and all other routes show MainApp */}
-  <Route
-    path="/"
-    element={
-      <MainApp
-        skills={skills}
-        projects={projects}
-        testimonials={testimonials}
-        fadeInUp={fadeInUp}
-        staggerContainer={staggerContainer}
-      />
-    }
-  />
-</Routes>
+          <Route
+            path="/"
+            element={
+              <MainApp
+                skills={skills}
+                projects={projects}
+                testimonials={testimonials}
+                fadeInUp={fadeInUp}
+                staggerContainer={staggerContainer}
+              />
+            }
+          />
+          <Route path="/projects/:id" element={<ProjectDetail projects={projects} />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute>
+                <AdminPanel />
+              </PrivateRoute>
+            }
+          />
+          <Route path="*" element={<div className="text-center py-20">404 Not Found</div>} />
+        </Routes>
 
         <Footer />
       </div>
