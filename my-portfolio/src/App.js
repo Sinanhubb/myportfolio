@@ -155,10 +155,10 @@ function App() {
   const projects = [
     {
       id: 1,
-      title: "E-commerce Platform",
-      description: "A full-stack e-commerce solution with payment integration and inventory management.",
+      title: "T-Shirt Design Studio",
+      description: "A 3D customizable T-shirt design app where users can upload images, add text, and preview changes in real time. Built for a seamless design experience using cutting-edge web technologies.",
       image: "/api/placeholder/150/200",
-      tags: ["React", "Node.js", "MongoDB"],
+      tags: ["Lit,", "Vite", "TypeScript","Tailwind CSS"]
     },
     {
       id: 2,
