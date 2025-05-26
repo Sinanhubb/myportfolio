@@ -171,14 +171,14 @@ function App() {
       id: 3,
       title: "On-Demand Service Provider App",
       description: "This project aims to develop a full-stack web and mobile application that connects users with nearby technicians for various household and commercial services (e.g., plumbing, electrical work, appliance repair). The platform enables users to easily book services, track technicians in real time, and securely manage transactions",
-      image: "/api/placeholder/150/200",
+      image: "Worker home page.png",
       tags: ["React", "Python", "MySQL","postgres ", "Tailwind CSS"],
     },
     {
       id: 4,
       title: "Indoor Navigation Using AR",
       description: "Created an Augmented Reality-based indoor navigation app that helps users navigate complex indoor environments such as malls, campuses, and hospitals using their smartphones. The application employs AR overlays to provide real-time visual guidance to users as they find their way to their destination..",
-      image: "/api/placeholder/150/200",
+      image: "OIP.jpg",
       tags: ["unity3d", "arcore", "python","c#"],
     },
   ];
