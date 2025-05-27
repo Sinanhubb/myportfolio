@@ -65,7 +65,7 @@ const AdminPanel = () => {
 
       if (Array.isArray(response.data)) {
         const formatted = response.data.map((sub) => ({
-          ...sub,
+        
           id: sub.id || `${sub.email}-${Date.now()}`,
           submitted_at: sub.submitted_at || sub.created_at || new Date().toISOString(),
         }));
