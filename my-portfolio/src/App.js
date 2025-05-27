@@ -181,13 +181,7 @@ function App() {
       image: "OIP.jpg",
       tags: ["unity3d", "arcore", "python","c#"],
     },
-    {
-      id: 2,
-      title: "Portfolio Website",
-      description: "A responsive portfolio website built with modern web technologies.",
-      image: "Screenshot 2025-05-27 075607.png",
-      tags: ["React", "Tailwind CSS", "Framer Motion"],
-    },
+    
   ];
 
   const testimonials = [

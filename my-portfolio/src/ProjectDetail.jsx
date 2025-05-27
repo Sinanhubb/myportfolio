@@ -196,6 +196,8 @@ const ProjectDetail = ({ projects }) => {
             "Real-time spatial tracking"
           ]
         };
+
+        
       
       default:
         return {
