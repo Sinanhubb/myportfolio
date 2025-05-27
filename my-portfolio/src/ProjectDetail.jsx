@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiExternalLink, FiGithub, FiCheckCircle } from "react-icons/fi";
-import { SiTailwindcss, SiStorybook, SiCloudflare, SiThreedotjs, SiReact, SiPython, SiMysql, SiPostgresql, SiUnity, SiCsharp, SiVite, SiTypescript, SiLit } from "react-icons/si";
+import { SiTailwindcss, SiStorybook, SiCloudflare, SiThreedotjs, SiReact, SiPython, SiMysql, SiPostgresql, SiUnity, SiVite, SiTypescript, SiLit } from "react-icons/si";
 
 const ProjectDetail = ({ projects }) => {
   const { id } = useParams();
@@ -54,7 +54,7 @@ const ProjectDetail = ({ projects }) => {
     'MySQL': <SiMysql className="text-blue-700" />,
     'postgres': <SiPostgresql className="text-blue-800" />,
     'unity3d': <SiUnity className="text-gray-800 dark:text-gray-200" />,
-    'c#': <SiCsharp className="text-purple-600" />,
+    'c#': <span className="text-purple-600 font-bold">C#</span>,
     'Vite': <SiVite className="text-yellow-500" />,
     'TypeScript': <SiTypescript className="text-blue-600" />,
     'Lit,': <SiLit className="text-blue-500" />,
