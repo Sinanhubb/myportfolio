@@ -123,7 +123,7 @@ const ProjectDetail = ({ projects }) => {
                   animate={{ opacity: 0.9 }}
                   transition={{ delay: 0.4 }}
                 >
-                  {project.tagline}
+                  {project.tagline || "Modern e-commerce experience for custom apparel"}
                 </motion.p>
               </div>
             </motion.div>
@@ -148,12 +148,10 @@ const ProjectDetail = ({ projects }) => {
                 <div className="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Project Details</h3>
                   <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-                    {project.projectFacts.map((fact, index) => (
-                      <li key={index} className="flex items-start">
-                        <FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> 
-                        {fact}
-                      </li>
-                    ))}
+                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Custom 3D product configurator with live updates</li>
+                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Responsive design optimized for desktop and mobile</li>
+                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Dynamic theme switching with Tailwind CSS</li>
+                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Hosted on Cloudflare Pages for global CDN and fast delivery</li>
                   </ul>
                 </div>
               </motion.div>
@@ -176,16 +174,37 @@ const ProjectDetail = ({ projects }) => {
             <motion.div className="mb-12" variants={staggerContainer} initial="hidden" animate="visible">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Key Features</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {project.keyFeatures.map((feature, i) => (
+                {[
+                  {
+                    title: "Real-Time 3D Customization",
+                    emoji: "🎨",
+                    description: "Users can modify t-shirt colors, add text, and upload images with instant visual feedback on a 3D model.",
+                  },
+                  {
+                    title: "Multiple Theme Support",
+                    emoji: "🌈",
+                    description: "Switch seamlessly between light, dark, and custom color themes with smooth animations.",
+                  },
+                  {
+                    title: "No Backend Required",
+                    emoji: "🚀",
+                    description: "Entirely client-side application with state management and localStorage for persistence.",
+                  },
+                  {
+                    title: "Fast Global Hosting",
+                    emoji: "⚡",
+                    description: "Deployed on Cloudflare Pages to leverage CDN for low latency worldwide.",
+                  }
+                ].map(({ title, emoji, description }, i) => (
                   <motion.div
                     key={i}
                     className="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600"
                     variants={staggerItem}
                   >
                     <h3 className="text-xl font-semibold mb-2 flex items-center">
-                      <span className="mr-2">{feature.emoji}</span> {feature.title}
+                      <span className="mr-2">{emoji}</span> {title}
                     </h3>
-                    <p className="text-gray-700 dark:text-gray-300">{feature.description}</p>
+                    <p className="text-gray-700 dark:text-gray-300">{description}</p>
                   </motion.div>
                 ))}
               </div>
@@ -193,26 +212,22 @@ const ProjectDetail = ({ projects }) => {
 
             {/* Demo & Code */}
             <motion.div className="flex flex-col sm:flex-row gap-4" variants={fadeIn}>
-              {project.demo && (
-                <a
-                  href={project.demo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-                >
-                  <FiExternalLink className="text-lg" /> Live Demo
-                </a>
-              )}
-              {project.github && (
-                <a
-                  href={project.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors"
-                >
-                  <FiGithub className="text-lg" /> Source Code
-                </a>
-              )}
+              <a
+                href={project.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                <FiExternalLink className="text-lg" /> Live Demo
+              </a>
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors"
+              >
+                <FiGithub className="text-lg" /> Source Code
+              </a>
             </motion.div>
           </div>
         </motion.div>
