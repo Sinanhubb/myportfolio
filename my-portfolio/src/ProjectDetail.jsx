@@ -48,7 +48,6 @@ const ProjectDetail = ({ projects }) => {
     'Three.js': <SiThreedotjs className="text-gray-800 dark:text-gray-200" />,
     'Storybook': <SiStorybook className="text-pink-500" />,
     'Cloudflare': <SiCloudflare className="text-orange-500" />,
-    // You can add more tech icon mappings here
   };
 
   if (!project) {
@@ -149,10 +148,10 @@ const ProjectDetail = ({ projects }) => {
                 <div className="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Project Details</h3>
                   <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" />SPA with state-managed routing</li>
-                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" />3D product visualization</li>
-                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" />Fully responsive design</li>
-                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" />No backend required</li>
+                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Custom 3D product configurator with live updates</li>
+                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Responsive design optimized for desktop and mobile</li>
+                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Dynamic theme switching with Tailwind CSS</li>
+                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Hosted on Cloudflare Pages for global CDN and fast delivery</li>
                   </ul>
                 </div>
               </motion.div>
@@ -175,30 +174,30 @@ const ProjectDetail = ({ projects }) => {
             <motion.div className="mb-12" variants={staggerContainer} initial="hidden" animate="visible">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Key Features</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {[ 
+                {[
                   {
-                    title: "Interactive 3D Customizer",
-                    emoji: "✨",
-                    description: "Three.js powered 3D t-shirt model with real-time updates as users add designs, text, or change colors.",
-                  },
-                  {
-                    title: "Real-Time Preview",
-                    emoji: "🖌️",
-                    description: "Live rendering of user customizations for immediate feedback and enhanced UX.",
-                  },
-                  {
-                    title: "Theme Switching",
+                    title: "Real-Time 3D Customization",
                     emoji: "🎨",
-                    description: "Switch between multiple themes dynamically using Tailwind and CSS modules.",
+                    description: "Users can modify t-shirt colors, add text, and upload images with instant visual feedback on a 3D model.",
                   },
                   {
-                    title: "Cloudflare Hosting",
-                    emoji: "☁️",
-                    description: "Deployed using Cloudflare Pages for ultra-fast global CDN and scalability.",
+                    title: "Multiple Theme Support",
+                    emoji: "🌈",
+                    description: "Switch seamlessly between light, dark, and custom color themes with smooth animations.",
+                  },
+                  {
+                    title: "No Backend Required",
+                    emoji: "🚀",
+                    description: "Entirely client-side application with state management and localStorage for persistence.",
+                  },
+                  {
+                    title: "Fast Global Hosting",
+                    emoji: "⚡",
+                    description: "Deployed on Cloudflare Pages to leverage CDN for low latency worldwide.",
                   }
                 ].map(({ title, emoji, description }, i) => (
-                  <motion.div 
-                    key={i} 
+                  <motion.div
+                    key={i}
                     className="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600"
                     variants={staggerItem}
                   >
@@ -213,17 +212,17 @@ const ProjectDetail = ({ projects }) => {
 
             {/* Demo & Code */}
             <motion.div className="flex flex-col sm:flex-row gap-4" variants={fadeIn}>
-              <a 
-                href={project.demo} 
-                target="_blank" 
+              <a
+                href={project.demo}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
               >
                 <FiExternalLink className="text-lg" /> Live Demo
               </a>
-              <a 
-                href={project.github} 
-                target="_blank" 
+              <a
+                href={project.github}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors"
               >
