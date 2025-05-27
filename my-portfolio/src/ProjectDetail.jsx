@@ -3,9 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiExternalLink, FiGithub, FiCheckCircle } from "react-icons/fi";
-import { SiTailwindcss, SiStorybook, SiCloudflare } from "react-icons/si";
-import { SiThreedotjs } from 'react-icons/si';
-
+import { SiTailwindcss, SiStorybook, SiCloudflare, SiThreedotjs } from "react-icons/si";
 
 const ProjectDetail = ({ projects }) => {
   const { id } = useParams();
@@ -47,7 +45,7 @@ const ProjectDetail = ({ projects }) => {
 
   const techIcons = {
     'Tailwind': <SiTailwindcss className="text-cyan-500" />,
-    'Three.js': <SiThreeDotJs className="text-gray-800 dark:text-gray-200" />,
+    'Three.js': <SiThreedotjs className="text-gray-800 dark:text-gray-200" />,
     'Storybook': <SiStorybook className="text-pink-500" />,
     'Cloudflare': <SiCloudflare className="text-orange-500" />
   };
@@ -223,17 +221,17 @@ const ProjectDetail = ({ projects }) => {
                     rel="noopener noreferrer"
                     className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                   >
-                    <FiExternalLink className="mr-2" /> Live Demo
+                    Live Demo <FiExternalLink className="ml-2" />
                   </a>
                 )}
-                {project.repo && (
+                {project.github && (
                   <a
-                    href={project.repo}
+                    href={project.github}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
                   >
-                    <FiGithub className="mr-2" /> GitHub Repo
+                    GitHub Repo <FiGithub className="ml-2" />
                   </a>
                 )}
               </div>
