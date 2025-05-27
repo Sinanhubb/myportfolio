@@ -162,10 +162,10 @@ function App() {
     },
     {
       id: 2,
-      title: "Portfolio Website",
-      description: "A responsive portfolio website built with modern web technologies.",
-      image: "/api/placeholder/150/200",
-      tags: ["React", "Tailwind CSS", "Framer Motion"],
+      title: "PyTerminal: Interactive Python Learning Environment",
+      description: "PyTerminal is a full-featured browser-based Python coding environment created specifically for beginning programmers. It combines a professional code editor with an integrated terminal in a single-window interface, allowing seamless code execution with Docker-powered backend security.",
+      image: "Screenshot 2025-05-27 075607.png",
+      tags: ["JavaScript", "Tailwind CSS", "Docker","python"],
     },
     {
       id: 3,
@@ -180,6 +180,13 @@ function App() {
       description: "Created an Augmented Reality-based indoor navigation app that helps users navigate complex indoor environments such as malls, campuses, and hospitals using their smartphones. The application employs AR overlays to provide real-time visual guidance to users as they find their way to their destination..",
       image: "OIP.jpg",
       tags: ["unity3d", "arcore", "python","c#"],
+    },
+    {
+      id: 2,
+      title: "Portfolio Website",
+      description: "A responsive portfolio website built with modern web technologies.",
+      image: "Screenshot 2025-05-27 075607.png",
+      tags: ["React", "Tailwind CSS", "Framer Motion"],
     },
   ];
 
