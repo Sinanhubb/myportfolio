@@ -218,7 +218,7 @@ const ProjectDetail = ({ projects }) => {
                   <a
                     href={project.demo}
                     target="_blank"
-                    rel="noopener noreferrer"
+                    rel="https://t-shirt-store.pages.dev/"
                     className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                   >
                     Live Demo <FiExternalLink className="ml-2" />
