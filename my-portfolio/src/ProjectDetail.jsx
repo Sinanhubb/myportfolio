@@ -63,240 +63,168 @@ const ProjectDetail = ({ projects }) => {
 
   // Define project-specific features and details based on project ID
   const getProjectFeatures = (projectId) => {
-  switch(projectId) {
-    case 1: // T-Shirt Design Studio
-      return {
-        tagline: "3D customizable T-shirt design experience with real-time preview",
-        demoLink: "https://tshirt-designer.example.com",
-        features: [
-          {
-            title: "Real-Time 3D Customization",
-            emoji: "🎨",
-            description: "Interactive 3D model responds instantly to color changes, text additions, and image uploads with physics-based fabric simulation.",
-            tech: "Three.js + WebGL"
-          },
-          {
-            title: "Modern Tech Stack",
-            emoji: "⚡",
-            description: "Built with Lit web components for modularity, Vite for ultra-fast builds, and TypeScript for robust type safety.",
-            tech: "Lit + Vite + TypeScript"
-          },
-          {
-            title: "Cross-Device Experience",
-            emoji: "📱",
-            description: "Fully responsive interface with touch gestures for mobile and keyboard shortcuts for desktop users.",
-            tech: "CSS Container Queries"
-          },
-          {
-            title: "Design Preservation",
-            emoji: "💾",
-            description: "Auto-saves designs to local storage and offers shareable links to continue editing later.",
-            tech: "IndexedDB API"
-          }
-        ],
-        quickFacts: [
-          "🔄 Real-time 3D rendering at 60fps",
-          "🎨 50+ color options and 20+ fonts",
-          "📸 AI-powered image placement suggestions",
-          "📦 Export designs as PNG or SVG"
-        ]
-      };
-    
-    case 2: // PyTerminal
-      return {
-        tagline: "Learn Python in your browser—no setup required. Execute code securely with Docker-backed isolation.",
-        demoLink: "https://pyterminal.netlify.app/",
-        features: [
-          {
-            title: "Real Python Interpreter",
-            emoji: "🐍",
-            description: "Full Python 3 execution supporting standard library, list comprehensions, and file I/O (with restrictions).",
-            tech: "Docker + Flask API"
-          },
-          {
-            title: "Smart Code Editor",
-            emoji: "👩‍💻",
-            description: "CodeMirror editor with autocompletion, syntax checking, and customizable themes (including dark mode).",
-            tech: "React + CodeMirror"
-          },
-          {
-            title: "Learning Pathways",
-            emoji: "🎯",
-            description: "Guided tutorials with 50+ exercises covering basics to algorithms, with instant feedback.",
-            tech: "Markdown-based content system"
-          },
-          {
-            title: "Enterprise-Grade Security",
-            emoji: "🛡️",
-            description: "Each execution runs in ephemeral containers with network isolation and CPU/memory limits.",
-            tech: "Docker + Kubernetes"
-          }
-        ],
-        quickFacts: [
-          "🚀 Executes code in <800ms average",
-          "📚 50+ pre-loaded code examples",
-          "🔐 Zero persistent storage - fully ephemeral",
-          "📱 Works on tablets with virtual keyboard"
-        ],
-        testingExamples: [
-          "Loops: `for i in range(3): print('PyTerminal!')`",
-          "Math: `[x**2 for x in range(10)]`",
-          "Errors: `print('Missing paren'`"
-        ]
-      };
-    
-    case 3: // On-Demand Service Provider App
-      return {
-        tagline: "Uber-like platform connecting users with local home service professionals",
-        demoLink: "https://home-services.example.com",
-        features: [
-          {
-            title: "Live Technician Tracking",
-            emoji: "📍",
-            description: "Real-time GPS tracking with ETA predictions and route visualization on interactive maps.",
-            tech: "Mapbox GL + WebSockets"
-          },
-          {
-            title: "Frictionless Payments",
-            emoji: "💳",
-            description: "End-to-end encrypted payments supporting credit cards, Apple Pay, and Google Pay.",
-            tech: "Stripe API"
-          },
-          {
-            title: "Smart Scheduling",
-            emoji: "📅",
-            description: "AI-powered scheduling that considers travel time, technician skills, and customer preferences.",
-            tech: "Python + scikit-learn"
-          },
-          {
-            title: "Bidirectional Ratings",
-            emoji: "⭐",
-            description: "Transparent review system where both customers and technicians can rate each other.",
-            tech: "Firebase Realtime DB"
-          }
-        ],
-        quickFacts: [
-          "🛠️ 15+ service categories",
-          "⏱️ Average 45-min response time",
-          "📊 Dynamic pricing algorithm",
-          "🔔 SMS/email notifications"
-        ]
-      };
-    
-    case 4: // Portfolio Website
-      return {
-        tagline: "Interactive developer portfolio with immersive 3D elements",
-        demoLink: "https://myportfolio.example.com",
-        features: [
-          {
-            title: "3D Scene Interaction",
-            emoji: "🕹️",
-            description: "Interactive 3D environment with clickable project elements that respond to mouse movements.",
-            tech: "Three.js + R3F"
-          },
-          {
-            title: "Theme Engine",
-            emoji: "🎨",
-            description: "6 color themes with automatic OS preference detection and manual toggle with smooth transitions.",
-            tech: "CSS Variables + React Context"
-          },
-          {
-            title: "Performance Focused",
-            emoji: "⚡",
-            description: "Perfect Lighthouse scores achieved through code splitting, SVG animations, and optimized assets.",
-            tech: "Next.js + Vercel"
-          },
-          {
-            title: "Accessibility First",
-            emoji: "♿",
-            description: "WCAG AA compliant with keyboard navigation, reduced motion options, and ARIA labels.",
-            tech: "axe-core integration"
-          }
-        ],
-        quickFacts: [
-          "📊 100/100 Lighthouse performance",
-          "🌓 System-aware dark/light mode",
-          "🖱️ Interactive 3D cursor effects",
-          "📱 Fully responsive down to 320px"
-        ]
-      };
-    
-    case 5: // Indoor Navigation Using AR
-      return {
-        tagline: "Augmented Reality wayfinding for complex buildings with centimeter precision",
-        demoLink: "https://ar-navigation.example.com",
-        features: [
-          {
-            title: "Markerless Tracking",
-            emoji: "👁️",
-            description: "Uses SLAM technology to navigate without QR codes or beacons by recognizing architectural features.",
-            tech: "ARKit + ARCore"
-          },
-          {
-            title: "Multi-Floor Routing",
-            emoji: "🏢",
-            description: "Handles complex multi-story navigation with elevator/escalator awareness and accessibility options.",
-            tech: "Custom Graph DB"
-          },
-          {
-            title: "Offline Mode",
-            emoji: "📴",
-            description: "Works without internet after initial download of venue maps and navigation data.",
-            tech: "IndexedDB caching"
-          },
-          {
-            title: "Analytics Dashboard",
-            emoji: "📊",
-            description: "Venue administrators get heatmaps of navigation patterns and choke point analysis.",
-            tech: "WebGL + D3.js"
-          }
-        ],
-        quickFacts: [
-          "📍 <1m accuracy in tested venues",
-          "🔄 Auto-updating maps via CMS",
-          "♿ Wheelchair-accessible routes",
-          "📱 iOS/Android compatible"
-        ],
-        testingInstructions: [
-          "1. Scan your surroundings slowly",
-          "2. Tap any destination pin",
-          "3. Follow the floating AR path markers"
-        ]
-      };
-    
-    default:
-      return {
-        tagline: "Cutting-edge digital solution tailored to user needs",
-        features: [
-          {
-            title: "Cloud-Native Architecture",
-            emoji: "☁️",
-            description: "Microservices deployed with Kubernetes for maximum scalability and reliability.",
-            tech: "K8s + Docker"
-          },
-          {
-            title: "AI Enhancements",
-            emoji: "🧠",
-            description: "Machine learning models that personalize user experiences based on behavior patterns.",
-            tech: "Python + TensorFlow"
-          },
-          {
-            title: "Real-Time Features",
-            emoji: "⚡",
-            description: "WebSocket connections enable live updates without page refreshes.",
-            tech: "Socket.io"
-          }
-        ],
-        quickFacts: [
-          "🚀 Deployed on edge network",
-          "📈 Handles 10K+ concurrent users",
-          "🔒 SOC2 compliant security",
-          "🌍 Multi-region deployment"
-        ]
-      };
-  }
-};
-
+    switch(projectId) {
+      case 1: // T-Shirt Design Studio
+        return {
+          tagline: "3D customizable T-shirt design experience",
+          features: [
+            {
+              title: "Real-Time 3D Customization",
+              emoji: "🎨",
+              description: "Users can modify t-shirt colors, add text, and upload images with instant visual feedback on a 3D model.",
+            },
+            {
+              title: "Modern Tech Stack",
+              emoji: "⚡",
+              description: "Built with Lit web components, Vite for fast development, and TypeScript for type safety.",
+            },
+            {
+              title: "Responsive Design",
+              emoji: "📱",
+              description: "Fully responsive interface that works seamlessly across desktop, tablet, and mobile devices.",
+            },
+            {
+              title: "Interactive Preview",
+              emoji: "👁️",
+              description: "Live preview system that updates the 3D model in real-time as users make design changes.",
+            }
+          ],
+          quickFacts: [
+            "3D product configurator with live updates",
+            "Modern web components architecture",
+            "TypeScript for enhanced code quality",
+            "Responsive design for all devices"
+          ]
+        };
+      
+      case 2: // PyTerminal
+        return {
+          tagline: "Learn Python in your browser—no setup required. Execute code securely with Docker-backed isolation.",
+          demoLink: "https://pyterminal.netlify.app/",
+          features: [
+            {
+              title: "Real Python Interpreter",
+              emoji: "🐍",
+              description: "Full Python 3 execution in the browser. Supports loops, functions, and user inputs (like `input()`) with real-time output.",
+            },
+            {
+              title: "Beginner-Friendly IDE",
+              emoji: "👩‍💻",
+              description: "Built-in CodeMirror editor with syntax highlighting, line numbers, and smart indentation for clean coding habits.",
+            },
+            {
+              title: "Zero-Config Learning",
+              emoji: "🎯",
+              description: "Includes a curated library of examples (from 'Hello World' to loops) so new coders can learn by tweaking live code.",
+            },
+            {
+              title: "Secure Execution",
+              emoji: "🛡️",
+              description: "Execution sandbox protects users from harmful code. Timeouts, memory limits, and rate-limiting enforced.",
+            }
+          ],
+          quickFacts: [
+            "🚀 Run Python code instantly in your browser",
+            "⚡ Code executes in <1s via lightweight containers",
+            "📱 Mobile-ready and PWA-compatible",
+            "🔌 Open-source backend deployable anywhere"
+          ]
+        };
+      
+      case 3: // On-Demand Service Provider App
+        return {
+          tagline: "Full-stack platform connecting users with local technicians",
+          features: [
+            {
+              title: "Real-Time Tracking",
+              emoji: "📍",
+              description: "Track technicians in real-time as they travel to your location for service appointments.",
+            },
+            {
+              title: "Secure Payments",
+              emoji: "💳",
+              description: "Integrated secure payment system for hassle-free transactions between users and service providers.",
+            },
+            {
+              title: "Service Booking",
+              emoji: "📅",
+              description: "Easy-to-use booking system for scheduling various household and commercial services.",
+            },
+            {
+              title: "Full-Stack Architecture",
+              emoji: "🏗️",
+              description: "Complete web and mobile application built with React frontend and Python backend.",
+            }
+          ],
+          quickFacts: [
+            "Real-time technician tracking",
+            "Secure payment integration",
+            "Multi-service booking platform",
+            "Cross-platform compatibility"
+          ]
+        };
+      
+      case 4: // Indoor Navigation Using AR
+        return {
+          tagline: "Augmented Reality indoor navigation for complex environments",
+          features: [
+            {
+              title: "AR Visual Guidance",
+              emoji: "🔍",
+              description: "Real-time AR overlays provide visual directions directly on your smartphone screen.",
+            },
+            {
+              title: "Complex Environment Support",
+              emoji: "🏢",
+              description: "Navigate through malls, campuses, hospitals, and other complex indoor spaces with ease.",
+            },
+            {
+              title: "Unity3D Engine",
+              emoji: "🎮",
+              description: "Powered by Unity3D for smooth 3D rendering and AR capabilities.",
+            },
+            {
+              title: "ARCore Integration",
+              emoji: "📱",
+              description: "Utilizes Google ARCore for accurate spatial tracking and environment understanding.",
+            }
+          ],
+          quickFacts: [
+            "AR-powered visual navigation",
+            "Multi-environment support",
+            "Unity3D and ARCore integration",
+            "Real-time spatial tracking"
+          ]
+        };
+      
+      default:
+        return {
+          tagline: "Innovative solution built with modern technologies",
+          features: [
+            {
+              title: "Modern Architecture",
+              emoji: "🏗️",
+              description: "Built with modern development practices and cutting-edge technologies.",
+            },
+            {
+              title: "User-Centered Design",
+              emoji: "👥",
+              description: "Designed with user experience as the top priority.",
+            },
+            {
+              title: "Scalable Solution",
+              emoji: "📈",
+              description: "Architecture designed to scale with growing user needs.",
+            }
+          ],
+          quickFacts: [
+            "Modern technology stack",
+            "User-centered design approach",
+            "Scalable architecture"
+          ]
+        };
+    }
+  };
   if (!project) {
     return (
       <div className="min-h-screen flex items-center justify-center text-center px-4">

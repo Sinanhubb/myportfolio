@@ -156,7 +156,7 @@ function App() {
     {
       id: 1,
       title: "T-Shirt Design Studio",
-      description: "A 3D customizable T-shirt design app where users can upload images, add text, and preview changes in real time. Built for a seamless design experience using cutting-edge web technologies.",
+      description: "This 3D T-shirt design app offers an immersive customization experience, allowing users to upload graphics, add text, and tweak designs with real-time 3D previews. Built with modern web technologies like Three.js and React, it combines high-fidelity rendering with intuitive controls for effortless creativity—whether for personal use, branding, or e-commerce. Users can export professional-quality designs or share their creations digitally, all within a seamless, responsive interface.",
       image: "/Screenshot 2025-05-26 200025.png",
       tags: ["Lit,", "Vite", "TypeScript","Tailwind CSS"]
     },
