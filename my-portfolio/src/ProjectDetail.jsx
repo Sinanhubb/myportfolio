@@ -47,7 +47,8 @@ const ProjectDetail = ({ projects }) => {
     'Tailwind': <SiTailwindcss className="text-cyan-500" />,
     'Three.js': <SiThreedotjs className="text-gray-800 dark:text-gray-200" />,
     'Storybook': <SiStorybook className="text-pink-500" />,
-    'Cloudflare': <SiCloudflare className="text-orange-500" />
+    'Cloudflare': <SiCloudflare className="text-orange-500" />,
+    // You can add more tech icon mappings here
   };
 
   if (!project) {
@@ -141,7 +142,7 @@ const ProjectDetail = ({ projects }) => {
               <motion.div className="md:w-2/3" variants={staggerItem}>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Project Overview</h2>
                 <p className="text-lg text-gray-700 dark:text-gray-300">
-                  A cutting-edge print-on-demand t-shirt store built with Lit Web Components, featuring a fully interactive 3D product customizer with real-time previews. The application delivers a seamless single-page experience with sophisticated state management and pixel-perfect animations.
+                  {project.description}
                 </p>
               </motion.div>
               <motion.div className="md:w-1/3" variants={staggerItem}>
@@ -174,7 +175,7 @@ const ProjectDetail = ({ projects }) => {
             <motion.div className="mb-12" variants={staggerContainer} initial="hidden" animate="visible">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Key Features</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {[
+                {[ 
                   {
                     title: "Interactive 3D Customizer",
                     emoji: "✨",
@@ -193,48 +194,41 @@ const ProjectDetail = ({ projects }) => {
                   {
                     title: "Cloudflare Hosting",
                     emoji: "☁️",
-                    description: "Deployed using Cloudflare Pages for ultra-fast global delivery.",
+                    description: "Deployed using Cloudflare Pages for ultra-fast global CDN and scalability.",
                   }
-                ].map((feature, i) => (
-                  <motion.div
-                    key={i}
-                    className="p-6 bg-gradient-to-br from-indigo-50 to-white dark:from-gray-700 dark:to-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm"
+                ].map(({ title, emoji, description }, i) => (
+                  <motion.div 
+                    key={i} 
+                    className="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600"
                     variants={staggerItem}
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
-                    <div className="text-indigo-600 dark:text-indigo-400 text-3xl mb-4">{feature.emoji}</div>
-                    <h3 className="font-bold text-lg text-gray-900 dark:text-white mb-2">{feature.title}</h3>
-                    <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
+                    <h3 className="text-xl font-semibold mb-2 flex items-center">
+                      <span className="mr-2">{emoji}</span> {title}
+                    </h3>
+                    <p className="text-gray-700 dark:text-gray-300">{description}</p>
                   </motion.div>
                 ))}
               </div>
             </motion.div>
 
-            {/* Links */}
-            <motion.div initial="hidden" animate="visible" variants={fadeIn}>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">External Links</h2>
-              <div className="flex flex-wrap gap-4">
-                {project.demo && (
-                  <a
-                    href={project.demo}
-                    target="_blank"
-                    rel="https://t-shirt-store.pages.dev/"
-                    className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
-                  >
-                    Live Demo <FiExternalLink className="ml-2" />
-                  </a>
-                )}
-                {project.github && (
-                  <a
-                    href={project.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition"
-                  >
-                    GitHub Repo <FiGithub className="ml-2" />
-                  </a>
-                )}
-              </div>
+            {/* Demo & Code */}
+            <motion.div className="flex flex-col sm:flex-row gap-4" variants={fadeIn}>
+              <a 
+                href={project.demo} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                <FiExternalLink className="text-lg" /> Live Demo
+              </a>
+              <a 
+                href={project.github} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors"
+              >
+                <FiGithub className="text-lg" /> Source Code
+              </a>
             </motion.div>
           </div>
         </motion.div>
