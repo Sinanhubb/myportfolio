@@ -104,7 +104,7 @@ const AdminPanel = () => {
     const headers = ['Name', 'Email', 'Message', 'Date'];
     const csv = [
       headers.join(','),
-      ...filteredSubmissions.map((s) =>
+      filteredSubmissions.map((s) =>
         `"${s.name.replace(/"/g, '""')}","${s.email}","${s.message.replace(/"/g, '""')}","${format(new Date(s.submitted_at), 'PPpp')}"`
       ),
     ].join('\n');
