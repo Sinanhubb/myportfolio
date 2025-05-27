@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiExternalLink, FiGithub, FiCheckCircle } from "react-icons/fi";
-import { SiTailwindcss, SiStorybook, SiCloudflare, SiThreedotjs } from "react-icons/si";
+import { SiTailwindcss, SiStorybook, SiCloudflare, SiThreedotjs, SiReact, SiPython, SiMysql, SiPostgresql, SiUnity, SiCsharp, SiVite, SiTypescript, SiLit } from "react-icons/si";
 
 const ProjectDetail = ({ projects }) => {
   const { id } = useParams();
@@ -45,9 +45,184 @@ const ProjectDetail = ({ projects }) => {
 
   const techIcons = {
     'Tailwind': <SiTailwindcss className="text-cyan-500" />,
+    'Tailwind CSS': <SiTailwindcss className="text-cyan-500" />,
     'Three.js': <SiThreedotjs className="text-gray-800 dark:text-gray-200" />,
     'Storybook': <SiStorybook className="text-pink-500" />,
     'Cloudflare': <SiCloudflare className="text-orange-500" />,
+    'React': <SiReact className="text-blue-500" />,
+    'Python': <SiPython className="text-blue-600" />,
+    'MySQL': <SiMysql className="text-blue-700" />,
+    'postgres': <SiPostgresql className="text-blue-800" />,
+    'unity3d': <SiUnity className="text-gray-800 dark:text-gray-200" />,
+    'c#': <SiCsharp className="text-purple-600" />,
+    'Vite': <SiVite className="text-yellow-500" />,
+    'TypeScript': <SiTypescript className="text-blue-600" />,
+    'Lit,': <SiLit className="text-blue-500" />,
+    'arcore': <span className="text-green-500">📱</span>,
+  };
+
+  // Define project-specific features and details based on project ID
+  const getProjectFeatures = (projectId) => {
+    switch(projectId) {
+      case 1: // T-Shirt Design Studio
+        return {
+          tagline: "3D customizable T-shirt design experience",
+          features: [
+            {
+              title: "Real-Time 3D Customization",
+              emoji: "🎨",
+              description: "Users can modify t-shirt colors, add text, and upload images with instant visual feedback on a 3D model.",
+            },
+            {
+              title: "Modern Tech Stack",
+              emoji: "⚡",
+              description: "Built with Lit web components, Vite for fast development, and TypeScript for type safety.",
+            },
+            {
+              title: "Responsive Design",
+              emoji: "📱",
+              description: "Fully responsive interface that works seamlessly across desktop, tablet, and mobile devices.",
+            },
+            {
+              title: "Interactive Preview",
+              emoji: "👁️",
+              description: "Live preview system that updates the 3D model in real-time as users make design changes.",
+            }
+          ],
+          quickFacts: [
+            "3D product configurator with live updates",
+            "Modern web components architecture",
+            "TypeScript for enhanced code quality",
+            "Responsive design for all devices"
+          ]
+        };
+      
+      case 2: // Portfolio Website
+        return {
+          tagline: "Modern responsive portfolio showcasing web development skills",
+          features: [
+            {
+              title: "Smooth Animations",
+              emoji: "✨",
+              description: "Beautiful animations powered by Framer Motion for engaging user experience.",
+            },
+            {
+              title: "Dark Mode Support",
+              emoji: "🌙",
+              description: "Toggle between light and dark themes with smooth transitions.",
+            },
+            {
+              title: "Responsive Layout",
+              emoji: "📱",
+              description: "Optimized for all screen sizes from mobile to desktop.",
+            },
+            {
+              title: "Performance Optimized",
+              emoji: "🚀",
+              description: "Fast loading times with optimized images and lazy loading components.",
+            }
+          ],
+          quickFacts: [
+            "Framer Motion animations",
+            "Dark/light theme switching",
+            "Fully responsive design",
+            "Lazy loading optimization"
+          ]
+        };
+      
+      case 3: // On-Demand Service Provider App
+        return {
+          tagline: "Full-stack platform connecting users with local technicians",
+          features: [
+            {
+              title: "Real-Time Tracking",
+              emoji: "📍",
+              description: "Track technicians in real-time as they travel to your location for service appointments.",
+            },
+            {
+              title: "Secure Payments",
+              emoji: "💳",
+              description: "Integrated secure payment system for hassle-free transactions between users and service providers.",
+            },
+            {
+              title: "Service Booking",
+              emoji: "📅",
+              description: "Easy-to-use booking system for scheduling various household and commercial services.",
+            },
+            {
+              title: "Full-Stack Architecture",
+              emoji: "🏗️",
+              description: "Complete web and mobile application built with React frontend and Python backend.",
+            }
+          ],
+          quickFacts: [
+            "Real-time technician tracking",
+            "Secure payment integration",
+            "Multi-service booking platform",
+            "Cross-platform compatibility"
+          ]
+        };
+      
+      case 4: // Indoor Navigation Using AR
+        return {
+          tagline: "Augmented Reality indoor navigation for complex environments",
+          features: [
+            {
+              title: "AR Visual Guidance",
+              emoji: "🔍",
+              description: "Real-time AR overlays provide visual directions directly on your smartphone screen.",
+            },
+            {
+              title: "Complex Environment Support",
+              emoji: "🏢",
+              description: "Navigate through malls, campuses, hospitals, and other complex indoor spaces with ease.",
+            },
+            {
+              title: "Unity3D Engine",
+              emoji: "🎮",
+              description: "Powered by Unity3D for smooth 3D rendering and AR capabilities.",
+            },
+            {
+              title: "ARCore Integration",
+              emoji: "📱",
+              description: "Utilizes Google ARCore for accurate spatial tracking and environment understanding.",
+            }
+          ],
+          quickFacts: [
+            "AR-powered visual navigation",
+            "Multi-environment support",
+            "Unity3D and ARCore integration",
+            "Real-time spatial tracking"
+          ]
+        };
+      
+      default:
+        return {
+          tagline: "Innovative solution built with modern technologies",
+          features: [
+            {
+              title: "Modern Architecture",
+              emoji: "🏗️",
+              description: "Built with modern development practices and cutting-edge technologies.",
+            },
+            {
+              title: "User-Centered Design",
+              emoji: "👥",
+              description: "Designed with user experience as the top priority.",
+            },
+            {
+              title: "Scalable Solution",
+              emoji: "📈",
+              description: "Architecture designed to scale with growing user needs.",
+            }
+          ],
+          quickFacts: [
+            "Modern technology stack",
+            "User-centered design approach",
+            "Scalable architecture"
+          ]
+        };
+    }
   };
 
   if (!project) {
@@ -75,6 +250,8 @@ const ProjectDetail = ({ projects }) => {
       </div>
     );
   }
+
+  const projectDetails = getProjectFeatures(project.id);
 
   return (
     <div className="pt-24 pb-20 px-4 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -123,7 +300,7 @@ const ProjectDetail = ({ projects }) => {
                   animate={{ opacity: 0.9 }}
                   transition={{ delay: 0.4 }}
                 >
-                  {project.tagline || "Modern e-commerce experience for custom apparel"}
+                  {projectDetails.tagline}
                 </motion.p>
               </div>
             </motion.div>
@@ -146,12 +323,14 @@ const ProjectDetail = ({ projects }) => {
               </motion.div>
               <motion.div className="md:w-1/3" variants={staggerItem}>
                 <div className="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Project Details</h3>
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Project Highlights</h3>
                   <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Custom 3D product configurator with live updates</li>
-                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Responsive design optimized for desktop and mobile</li>
-                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Dynamic theme switching with Tailwind CSS</li>
-                    <li className="flex items-start"><FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> Hosted on Cloudflare Pages for global CDN and fast delivery</li>
+                    {projectDetails.quickFacts.map((fact, index) => (
+                      <li key={index} className="flex items-start">
+                        <FiCheckCircle className="mt-1 mr-2 text-indigo-500 flex-shrink-0" /> 
+                        {fact}
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </motion.div>
@@ -174,28 +353,7 @@ const ProjectDetail = ({ projects }) => {
             <motion.div className="mb-12" variants={staggerContainer} initial="hidden" animate="visible">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Key Features</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {[
-                  {
-                    title: "Real-Time 3D Customization",
-                    emoji: "🎨",
-                    description: "Users can modify t-shirt colors, add text, and upload images with instant visual feedback on a 3D model.",
-                  },
-                  {
-                    title: "Multiple Theme Support",
-                    emoji: "🌈",
-                    description: "Switch seamlessly between light, dark, and custom color themes with smooth animations.",
-                  },
-                  {
-                    title: "No Backend Required",
-                    emoji: "🚀",
-                    description: "Entirely client-side application with state management and localStorage for persistence.",
-                  },
-                  {
-                    title: "Fast Global Hosting",
-                    emoji: "⚡",
-                    description: "Deployed on Cloudflare Pages to leverage CDN for low latency worldwide.",
-                  }
-                ].map(({ title, emoji, description }, i) => (
+                {projectDetails.features.map(({ title, emoji, description }, i) => (
                   <motion.div
                     key={i}
                     className="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600"
@@ -210,25 +368,31 @@ const ProjectDetail = ({ projects }) => {
               </div>
             </motion.div>
 
-            {/* Demo & Code */}
-            <motion.div className="flex flex-col sm:flex-row gap-4" variants={fadeIn}>
-              <a
-                href={project.demo}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-              >
-                <FiExternalLink className="text-lg" /> Live Demo
-              </a>
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors"
-              >
-                <FiGithub className="text-lg" /> Source Code
-              </a>
-            </motion.div>
+            {/* Demo & Code - Only show if URLs exist */}
+            {(project.demo || project.github) && (
+              <motion.div className="flex flex-col sm:flex-row gap-4" variants={fadeIn}>
+                {project.demo && (
+                  <a
+                    href={project.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                  >
+                    <FiExternalLink className="text-lg" /> Live Demo
+                  </a>
+                )}
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors"
+                  >
+                    <FiGithub className="text-lg" /> Source Code
+                  </a>
+                )}
+              </motion.div>
+            )}
           </div>
         </motion.div>
       </div>
