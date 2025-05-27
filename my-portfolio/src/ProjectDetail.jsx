@@ -76,34 +76,6 @@ const ProjectDetail = ({ projects }) => {
     );
   }
 
-  // Project-specific details
-  const projectDetails = {
-    description: project.description || "A modern web application with cutting-edge features.",
-    keyFeatures: project.keyFeatures || [
-      {
-        title: "Responsive Design",
-        emoji: "📱",
-        description: "Fully responsive layout that works on all device sizes."
-      },
-      {
-        title: "Modern UI",
-        emoji: "🎨",
-        description: "Clean, intuitive user interface with smooth animations."
-      },
-      {
-        title: "Optimized Performance",
-        emoji: "⚡",
-        description: "Fast loading times and optimized for best user experience."
-      }
-    ],
-    projectFacts: project.projectFacts || [
-      "Built with modern web technologies",
-      "Cross-browser compatible",
-      "SEO optimized",
-      "Accessibility compliant"
-    ]
-  };
-
   return (
     <div className="pt-24 pb-20 px-4 min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
       <div className="max-w-6xl mx-auto">
@@ -169,14 +141,14 @@ const ProjectDetail = ({ projects }) => {
               <motion.div className="md:w-2/3" variants={staggerItem}>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Project Overview</h2>
                 <p className="text-lg text-gray-700 dark:text-gray-300">
-                  {projectDetails.description}
+                  {project.description}
                 </p>
               </motion.div>
               <motion.div className="md:w-1/3" variants={staggerItem}>
                 <div className="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-xl border border-gray-100 dark:border-gray-700">
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-4">Project Details</h3>
                   <ul className="space-y-3 text-gray-700 dark:text-gray-300">
-                    {projectDetails.projectFacts.map((fact, index) => (
+                    {project.projectFacts.map((fact, index) => (
                       <li key={index} className="flex items-start">
                         <FiCheckCircle className="mt-1 mr-2 text-indigo-500" /> 
                         {fact}
@@ -204,16 +176,16 @@ const ProjectDetail = ({ projects }) => {
             <motion.div className="mb-12" variants={staggerContainer} initial="hidden" animate="visible">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Key Features</h2>
               <div className="grid md:grid-cols-2 gap-6">
-                {projectDetails.keyFeatures.map(({ title, emoji, description }, i) => (
+                {project.keyFeatures.map((feature, i) => (
                   <motion.div
                     key={i}
                     className="p-6 bg-gray-50 dark:bg-gray-700 rounded-xl border border-gray-100 dark:border-gray-600"
                     variants={staggerItem}
                   >
                     <h3 className="text-xl font-semibold mb-2 flex items-center">
-                      <span className="mr-2">{emoji}</span> {title}
+                      <span className="mr-2">{feature.emoji}</span> {feature.title}
                     </h3>
-                    <p className="text-gray-700 dark:text-gray-300">{description}</p>
+                    <p className="text-gray-700 dark:text-gray-300">{feature.description}</p>
                   </motion.div>
                 ))}
               </div>
