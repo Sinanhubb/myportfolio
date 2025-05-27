@@ -164,7 +164,7 @@ function App() {
       id: 2,
       title: "PyTerminal: Interactive Python Learning Environment",
       description: "PyTerminal is a full-featured browser-based Python coding environment created specifically for beginning programmers. It combines a professional code editor with an integrated terminal in a single-window interface, allowing seamless code execution with Docker-powered backend security.",
-      image: "Screenshot 2025-05-27 075607.png",
+      image: "Screenshot 2025-05-18 185130.png",
       tags: ["JavaScript", "Tailwind CSS", "Docker","python"],
     },
     {
