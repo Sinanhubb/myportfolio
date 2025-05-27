@@ -3,7 +3,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiExternalLink, FiGithub, FiCheckCircle } from "react-icons/fi";
-import { SiTailwindcss, SiThreeDotJs, SiStorybook, SiCloudflare } from "react-icons/si";
+import { SiTailwindcss, SiStorybook, SiCloudflare } from "react-icons/si";
+import { SiThreedotjs } from 'react-icons/si';
+
 
 const ProjectDetail = ({ projects }) => {
   const { id } = useParams();
