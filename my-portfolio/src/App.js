@@ -367,7 +367,7 @@ function App() {
         image: "/Screenshot 2025-05-26 200025.png",
         tags: ["Three.js", "React", "Vite", "TypeScript", "Tailwind CSS"],
         featured: true,
-        demoUrl: "#",
+        demoUrl: "https://t-shirt-store.pages.dev/",
         githubUrl: "#"
       },
       {
@@ -377,7 +377,7 @@ function App() {
         image: "/Screenshot 2025-05-18 185130.png",
         tags: ["JavaScript", "Python", "Docker", "Tailwind CSS"],
         featured: true,
-        demoUrl: "#",
+        demoUrl: "https://pyterminal.netlify.app/",
         githubUrl: "#"
       },
       {
