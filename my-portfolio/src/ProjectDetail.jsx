@@ -371,18 +371,28 @@ const ProjectDetail = ({ projects }) => {
             </motion.div>
 
             {/* Demo & Code - Only show if URLs exist */}
-            {(project.demoUrl || project.githubUrl) && (
-  <motion.div className="flex flex-col sm:flex-row gap-4" variants={fadeIn}>
-    {project.demoUrl && (
-      <a 
-        href={project.demoUrl} 
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
-      >
-        <FiExternalLink className="text-lg" /> Live Demo
-      </a>
-    )}
+            {(project.demo || project.github) && (
+              <motion.div className="flex flex-col sm:flex-row gap-4" variants={fadeIn}>
+                {project.demo && (
+                  <a
+                    href={project.demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 transition-colors"
+                  >
+                    <FiExternalLink className="text-lg" /> Live Demo
+                  </a>
+                )}
+                {project.github && (
+                  <a
+                    href={project.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 border border-indigo-600 text-indigo-600 px-6 py-3 rounded-lg hover:bg-indigo-600 hover:text-white transition-colors"
+                  >
+                    <FiGithub className="text-lg" /> Source Code
+                  </a>
+                )}
               </motion.div>
             )}
           </div>
